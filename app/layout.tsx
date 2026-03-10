@@ -1,26 +1,29 @@
+import "./globals.css"
+
 export const metadata = {
   title: "Moneduca",
-  description: "Plataforma de educación financiera",
-};
+  description: "Aprende educación financiera"
+}
 
 export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
+  children
+}:{
+  children: React.ReactNode
+}){
+
+  return(
     <html lang="es">
       <body>
-        <header style={{padding:20, background:"#f4f6ff"}}>
-          <h2>Moneduca</h2>
+
+        <header className="header">
+          <h1>Moneduca</h1>
         </header>
 
-        <main>{children}</main>
+        <main className="container">
+          {children}
+        </main>
 
-        <footer style={{padding:20}}>
-          Proyecto de educación financiera
-        </footer>
       </body>
     </html>
-  );
+  )
 }
