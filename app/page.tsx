@@ -1,31 +1,17 @@
-import Link from "next/link"
+export default function Home() {
+  return (
+    <main style={{padding: "40px", fontFamily: "sans-serif"}}>
+      <h1>Moneduca</h1>
 
-export default function Home(){
+      <p>Bienvenido a la plataforma de educación financiera.</p>
 
-  return(
+      <h2>Actividades</h2>
 
-    <div>
-
-      <h2>Aprende a manejar tu dinero</h2>
-
-      <p>
-      Plataforma de educación financiera para estudiantes.
-      </p>
-
-      <Link href="/actividad">
-        <button>Comenzar actividad</button>
-      </Link>
-
-    </div>
-
+      <ul>
+        <li>
+          <a href="/actividad">Actividad 1: Presupuesto</a>
+        </li>
+      </ul>
+    </main>
   )
-}            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
 }
