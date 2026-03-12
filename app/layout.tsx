@@ -1,20 +1,7 @@
-import type { Metadata } from 'next'
-import type { ReactNode } from 'react'
+import type { ReactNode } from "react"
+import "./globals.css"
 
-export const metadata: Metadata = {
-  title: 'Moneduca',
-  icons: {
-    icon: [{ url: '/favicon.ico', sizes: 'any' }],
-    shortcut: '/favicon.ico',
-    apple: '/favicon.ico',
-  },
-}
-
-type RootLayoutProps = {
-  children: ReactNode
-}
-
-export default function RootLayout({ children }: RootLayoutProps) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
         </html>
   )
