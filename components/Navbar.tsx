@@ -88,7 +88,7 @@ export default function Navbar() {
           <Link key={l.href} href={l.href} className="mobile-link" onClick={() => setOpen(false)}>{l.label}</Link>
         ))}
         <Link href="/registro" className="btn btn-primary" style={{ marginTop: 16, width: '100%', justifyContent: 'center' }} onClick={() => setOpen(false)}>
-          Empezar gratis ✦
+          Empezar gratis
         </Link>
       </div>
     </>
