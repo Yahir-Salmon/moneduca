@@ -63,7 +63,7 @@ export default function ContactoPage() {
                   <textarea className="form-textarea" required placeholder="Cuéntanos en qué podemos ayudarte..." value={form.mensaje} onChange={e => setForm({...form, mensaje: e.target.value})} />
                 </div>
                 <button type="submit" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', fontSize: 16, padding: 16 }}>
-                  Enviar mensaje ✦
+                  Enviar mensaje
                 </button>
               </form>
             )}
