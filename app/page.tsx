@@ -34,7 +34,7 @@ export default function ContactoPage() {
             <span className="tag-deco">Escríbenos</span>
             <h1 className="contacto-h1">¿Tienes dudas?<br />¡Hablemos!</h1>
             <p className="contacto-desc">Estamos aquí para ayudarte. Ya sea que tengas una duda sobre un curso, quieras sugerir un tema o simplemente saludes — escríbenos.</p>
-            {[['📧', 'Email', 'hola@moneduca.mx'], ['⏰', 'Tiempo de respuesta', 'Respondemos en menos de 24 horas'], ['🤖', '¿Dudas financieras?', 'Usa nuestro chatbot en la página principal — disponible 24/7']].map(([icon, label, val]) => (
+            {[['📧', 'Email', 'moneduca.finanzas@gmail.com'], ['⏰', 'Tiempo de respuesta', 'Respondemos en menos de 24 horas'], ['🤖', '¿Dudas financieras?', 'Usa nuestro chatbot en la página principal — disponible 24/7']].map(([icon, label, val]) => (
               <div key={label} className="contact-item">
                 <div className="contact-icon">{icon}</div>
                 <div><div className="contact-label">{label}</div><div className="contact-val">{val}</div></div>
