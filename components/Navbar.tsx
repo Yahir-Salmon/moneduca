@@ -75,7 +75,7 @@ export default function Navbar() {
           </div>
           <div className="nav-cta">
             <Link href="/registro" className="btn btn-outline" style={{ padding: '10px 20px', fontSize: 14 }}>Entrar</Link>
-            <Link href="/registro" className="btn btn-primary" style={{ padding: '10px 20px', fontSize: 14 }}>Empezar gratis ✦</Link>
+            <Link href="/registro" className="btn btn-primary" style={{ padding: '10px 20px', fontSize: 14 }}>Empezar gratis</Link>
           </div>
           <button className="hamburger" onClick={() => setOpen(!open)}>
             <span className="ham-line" /><span className="ham-line" /><span className="ham-line" />
