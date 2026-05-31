@@ -1,3 +1,4 @@
+'use client'
 import Link from 'next/link'
 import Chatbot from '@/components/Chatbot'
 
