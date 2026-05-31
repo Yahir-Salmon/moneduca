@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
         'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: 'Moneduca <onboarding@resend.dev>',
+        from: 'Moneduca <hola@moneduca.mx>',
         to: ['moneduca.finanzas@gmail.com'],
         subject: `Nuevo mensaje de contacto — ${nombre}`,
         html: `
