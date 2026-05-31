@@ -1,5 +1,5 @@
 'use client'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
 
 interface Message { role: 'user' | 'assistant'; content: string }
 
@@ -11,9 +11,7 @@ export default function Chatbot() {
   ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
-  const bottomRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages])
+  const messagesRef = useRef<HTMLDivElement>(null)
 
   const send = async (text: string) => {
     if (!text.trim() || loading) return
@@ -31,14 +29,16 @@ export default function Chatbot() {
       setMessages(prev => [...prev, { role: 'assistant', content: data.content }])
     } catch {
       setMessages(prev => [...prev, { role: 'assistant', content: 'Lo siento, hubo un error. Intenta de nuevo.' }])
-    } finally { setLoading(false) }
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
     <>
       <style>{`
         .chatbot { background: white; border-radius: 24px; border: 1.5px solid #E5E7EB; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.08); display: flex; flex-direction: column; height: 500px; }
-        .chat-hdr { background: #0D0D0D; padding: 16px 20px; display: flex; align-items: center; gap: 12px; }
+        .chat-hdr { background: #0D0D0D; padding: 16px 20px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
         .chat-avatar { width: 36px; height: 36px; background: #00C896; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
         .chat-hdr-name { font-family: 'Syne',sans-serif; font-weight: 700; color: white; font-size: 15px; }
         .chat-hdr-status { font-size: 12px; color: #00C896; display: flex; align-items: center; gap: 5px; }
@@ -54,10 +54,10 @@ export default function Chatbot() {
         .typing-dot { width: 7px; height: 7px; background: #9CA3AF; border-radius: 50%; animation: bounce 1.2s infinite; }
         .typing-dot:nth-child(2){animation-delay:0.2s} .typing-dot:nth-child(3){animation-delay:0.4s}
         @keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
-        .chat-sugg { padding: 8px 16px; display: flex; gap: 8px; flex-wrap: wrap; border-top: 1px solid #F4F4F6; }
+        .chat-sugg { padding: 8px 16px; display: flex; gap: 8px; flex-wrap: wrap; border-top: 1px solid #F4F4F6; flex-shrink: 0; }
         .sugg-btn { font-size: 12px; padding: 6px 12px; background: #F4F4F6; border: none; border-radius: 100px; cursor: pointer; color: #0D0D0D; transition: all 0.2s; white-space: nowrap; font-family: 'DM Sans',sans-serif; }
         .sugg-btn:hover { background: #D4F5EB; color: #009970; }
-        .chat-input-row { padding: 12px 16px; border-top: 1.5px solid #E5E7EB; display: flex; gap: 10px; align-items: center; }
+        .chat-input-row { padding: 12px 16px; border-top: 1.5px solid #E5E7EB; display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
         .chat-input { flex: 1; border: 1.5px solid #E5E7EB; border-radius: 100px; padding: 10px 18px; font-size: 14px; font-family: 'DM Sans',sans-serif; outline: none; transition: border 0.2s; background: #FAFAFA; color: #0D0D0D; }
         .chat-input:focus { border-color: #00C896; background: white; }
         .chat-send { width: 40px; height: 40px; background: #0D0D0D; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; font-size: 16px; }
@@ -72,12 +72,11 @@ export default function Chatbot() {
             <div className="chat-hdr-status"><span className="status-dot" /> En línea</div>
           </div>
         </div>
-        <div className="chat-msgs">
+        <div className="chat-msgs" ref={messagesRef}>
           {messages.map((m, i) => (
             <div key={i} className={`msg ${m.role === 'user' ? 'msg-user' : 'msg-bot'}`}>{m.content}</div>
           ))}
           {loading && <div className="typing"><span className="typing-dot"/><span className="typing-dot"/><span className="typing-dot"/></div>}
-          <div ref={bottomRef} />
         </div>
         {messages.length <= 1 && (
           <div className="chat-sugg">
