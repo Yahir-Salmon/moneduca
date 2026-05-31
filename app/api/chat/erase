@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+eeeimport { NextRequest, NextResponse } from 'next/server'
 
 const SYSTEM_PROMPT = `Eres el asistente de finanzas personales de Moneduca, una plataforma educativa para jóvenes de secundaria en México.
 
