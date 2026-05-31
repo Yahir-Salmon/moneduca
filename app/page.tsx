@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import Chatbot from '@/components/Chatbot'
 
 export default function ContactoPage() {
   const [sent, setSent] = useState(false)
