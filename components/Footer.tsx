@@ -4,18 +4,20 @@ export default function Footer() {
   return (
     <>
       <style>{`
-        .footer { background: #0D0D0D; color: #9CA3AF; padding: 64px 0 32px; }
+        .footer { background: #3D2A0E; color: #C8934A; padding: 64px 0 32px; }
         .footer-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
         .footer-top {
           display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px;
-          padding-bottom: 48px; border-bottom: 1px solid #1F2937;
+          padding-bottom: 48px; border-bottom: 1px solid rgba(200,147,74,0.2);
         }
-        .footer-logo { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; color: white; display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
-        .footer-desc { font-size: 14px; line-height: 1.7; max-width: 280px; }
-        .footer-col-title { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; color: white; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 18px; }
-        .footer-link { display: block; color: #9CA3AF; font-size: 14px; margin-bottom: 10px; transition: color 0.2s; }
-        .footer-link:hover { color: #00C896; }
-        .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 32px; font-size: 13px; }
+        .footer-logo { font-family: 'Fredoka',sans-serif; font-size: 22px; font-weight: 700; color: rgba(252,230,139,1); display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+        .footer-logo-box { width: 34px; height: 34px; background: rgba(250,191,77,1); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .footer-desc { font-size: 14px; line-height: 1.7; max-width: 280px; color: #A87840; }
+        .footer-col-title { font-family: 'Nunito',sans-serif; font-size: 12px; font-weight: 800; color: rgba(252,230,139,0.8); letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 18px; }
+        .footer-link { display: block; color: #A87840; font-size: 14px; margin-bottom: 10px; transition: color 0.2s; font-family: 'Nunito',sans-serif; }
+        .footer-link:hover { color: rgba(252,230,139,1); }
+        .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 32px; font-size: 13px; font-family: 'Nunito',sans-serif; }
+        .footer-mascot { font-size: 28px; }
         @media (max-width: 768px) {
           .footer-top { grid-template-columns: 1fr 1fr; gap: 32px; }
           .footer-bottom { flex-direction: column; gap: 10px; text-align: center; }
@@ -25,7 +27,10 @@ export default function Footer() {
         <div className="footer-inner">
           <div className="footer-top">
             <div>
-              <div className="footer-logo">💰 Moneduca</div>
+              <div className="footer-logo">
+                <div className="footer-logo-box">🦊</div>
+                Moneduca
+              </div>
               <p className="footer-desc">Educación financiera divertida y accesible para jóvenes de secundaria. Aprende a manejar tu dinero desde hoy.</p>
             </div>
             <div>
@@ -48,8 +53,9 @@ export default function Footer() {
             </div>
           </div>
           <div className="footer-bottom">
-            <p>© 2025 <span style={{ color: '#00C896' }}>Moneduca</span>. Todos los derechos reservados.</p>
-            <p>Hecho con ❤️ para jóvenes mexicanos</p>
+            <p>© 2025 <span style={{ color: 'rgba(252,230,139,1)' }}>Moneduca</span>. Todos los derechos reservados.</p>
+            <span className="footer-mascot">🦊</span>
+            <p style={{ color: '#A87840' }}>Hecho con ❤️ para jóvenes mexicanos</p>
           </div>
         </div>
       </footer>
