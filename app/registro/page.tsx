@@ -111,10 +111,25 @@ export default function RegistroPage() {
             </button>
           </div>
 
-          {error && <div className="form-error">⚠️ {error}</div>}
-          {success && <div className="form-success">✅ {success}</div>}
+{error && <div className="form-error">⚠️ {error}</div>}
 
-          <form onSubmit={tab === 'registro' ? handleRegistro : handleLogin}>
+{success ? (
+  <div style={{ textAlign: 'center', padding: '20px 0' }}>
+    <div style={{ fontSize: 56, marginBottom: 16 }}>🎉</div>
+    <p style={{ fontFamily: "'Fredoka',sans-serif", fontSize: 22, fontWeight: 600, color: '#3D2A0E', marginBottom: 12 }}>
+      ¡Cuenta creada!
+    </p>
+    <p style={{ fontFamily: "'Nunito',sans-serif", fontSize: 15, color: '#8C6D45', lineHeight: 1.6, marginBottom: 24 }}>
+      Te enviamos un email de confirmación a<br/>
+      <strong style={{ color: '#6B4520' }}>{success}</strong><br/>
+      Confírmalo y luego inicia sesión.
+    </p>
+    <button className="submit-btn" onClick={() => { setSuccess(''); setTab('login') }}>
+      Ir a iniciar sesión →
+    </button>
+  </div>
+) : (
+  <form onSubmit={tab === 'registro' ? handleRegistro : handleLogin}>
             {tab === 'registro' && (
               <>
                 <div className="form-group">
@@ -138,7 +153,8 @@ export default function RegistroPage() {
             <button type="submit" className="submit-btn" disabled={loading}>
               {loading ? 'Cargando...' : tab === 'registro' ? 'Crear mi cuenta ✦' : 'Iniciar sesión →'}
             </button>
-          </form>
+</form>
+)}
 
           <div className="divider">o continúa con</div>
           <button className="google-btn" onClick={handleGoogle}>
