@@ -25,7 +25,11 @@ export default function DashboardPage() {
       setUser(user)
 
       const { data: profile } = await supabase.from('profiles').select('nombre').eq('id', user.id).single()
-      setNombre(profile?.nombre || user.user_metadata?.nombre || 'Estudiante')
+      const nombreDetectado = profile?.nombre || user.user_metadata?.nombre || user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || 'Estudiante'
+      setNombre(nombreDetectado)
+      if (!profile && (user.user_metadata?.full_name || user.user_metadata?.name)) {
+        await supabase.from('profiles').upsert({ id: user.id, nombre: user.user_metadata.full_name || user.user_metadata.name })
+      }
       setLoading(false)
     }
     getUser()
