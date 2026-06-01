@@ -6,11 +6,18 @@ import Footer from '@/components/Footer'
 export const metadata: Metadata = {
   title: 'Moneduca — Finanzas para jóvenes',
   description: 'Aprende a manejar tu dinero de forma divertida e inteligente. Cursos de finanzas personales diseñados para jóvenes de secundaria.',
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es">
+      <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+      </head>
       <body>
         <Navbar />
         <main>{children}</main>
