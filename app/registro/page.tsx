@@ -34,12 +34,13 @@ export default function RegistroPage() {
     }
 
     if (data.user) {
-      await supabase.from('profiles').insert({
+      await supabase.from('profiles').upsert({
         id: data.user.id,
         nombre: form.nombre,
         edad: parseInt(form.edad),
       })
-      setSuccess('¡Cuenta creada! Revisa tu email para confirmar tu cuenta.')
+      setSuccess(form.email)
+      setForm({ nombre: '', email: '', password: '', edad: '' })
     }
     setLoading(false)
   }
