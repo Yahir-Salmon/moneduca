@@ -117,7 +117,7 @@ export default function Navbar() {
 
       <nav className="nav">
         <div className="nav-inner">
-          <Link href={session ? '/dashboard' : '/'} className="nav-logo">
+          <Link href="/" className="nav-logo">
             <div className="logo-box">🦊</div>
             Moneduca
           </Link>
