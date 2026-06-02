@@ -1,6 +1,9 @@
 'use client'
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Chatbot from '@/components/Chatbot'
+import { supabase } from '@/lib/supabase'
 
 const modulos = [
   { emoji: '💰', color: 'rgba(252,230,139,0.5)', accent: '#C8934A', titulo: 'Bases: Historia del dinero', desc: 'Descubre cómo nació el dinero, por qué existe y cómo ha cambiado el mundo.', nivel: 'Básico' },
@@ -19,6 +22,19 @@ const pasos = [
 ]
 
 export default function HomePage() {
+  const [loggedIn, setLoggedIn] = useState(false)
+  const router = useRouter()
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => setLoggedIn(!!session))
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => setLoggedIn(!!session))
+    return () => subscription.unsubscribe()
+  }, [])
+
+  const handleCTA = (e: React.MouseEvent) => {
+    e.preventDefault()
+    router.push(loggedIn ? '/dashboard' : '/registro')
+  }
   return (
     <>
       <style>{`
@@ -107,7 +123,7 @@ export default function HomePage() {
             </h1>
             <p className="hero-desc">Moneduca te enseña todo lo que la escuela no te dijo sobre el dinero. 6 módulos, lecciones interactivas y Monedoki como tu guía.</p>
             <div className="hero-btns">
-              <Link href="/registro" className="btn btn-primary" style={{ fontSize: 16, padding: '16px 32px' }}>Empezar gratis ✦</Link>
+              <button onClick={handleCTA} className="btn btn-primary" style={{ fontSize: 16, padding: '16px 32px' }}>Empezar gratis ✦</button>
               <Link href="/cursos" className="btn btn-secondary" style={{ fontSize: 16, padding: '16px 32px' }}>Ver módulos</Link>
             </div>
             <div className="hero-stats">
@@ -168,7 +184,7 @@ export default function HomePage() {
             <p style={{ fontSize: 15, color: '#8C6D45', marginBottom: 24, fontFamily: "'Nunito',sans-serif", lineHeight: 1.7 }}>
               Aprende con preguntas interactivas, feedback inmediato y la compañía de Monedoki. Te celebra cuando aciertas y te anima cuando te equivocas.
             </p>
-            <Link href="/registro" className="btn btn-primary">Conocer a Monedoki ✦</Link>
+            <button onClick={handleCTA} className="btn btn-primary">Conocer a Monedoki ✦</button>
           </div>
           <img src="/monedoki.png" alt="Monedoki" className="mk-cta-img" onError={e => { (e.target as HTMLImageElement).style.display='none' }} />
         </div>
@@ -215,9 +231,7 @@ export default function HomePage() {
         <div className="cta-box">
           <h2 className="cta-h2">¿Listo para <span>dominar</span> tu dinero?</h2>
           <p className="cta-desc">Únete gratis hoy. Sin tarjeta, sin compromisos.</p>
-          <Link href="/registro" className="btn btn-yellow" style={{ fontSize: 17, padding: '18px 40px', position: 'relative', zIndex: 1 }}>
-            Crear mi cuenta gratis ✦
-          </Link>
+          <button onClick={handleCTA} className="btn btn-yellow" style={{ fontSize: 17, padding: '18px 40px', position: 'relative', zIndex: 1 }}>Crear mi cuenta gratis ✦</button>
         </div>
       </div>
     </>
