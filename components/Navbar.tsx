@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
 const links = [
@@ -15,6 +15,7 @@ export default function Navbar() {
   const [session, setSession] = useState(false)
   const [nombre, setNombre] = useState('')
   const pathname = usePathname()
+  const router = useRouter()
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -34,6 +35,11 @@ export default function Navbar() {
     return () => subscription.unsubscribe()
   }, [])
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    router.push('/')
+  }
+
   return (
     <>
       <style>{`
@@ -45,15 +51,16 @@ export default function Navbar() {
         .nav-link { padding: 8px 16px; border-radius: 100px; font-size: 15px; font-weight: 600; color: #8C6D45; transition: all 0.2s; font-family: 'Nunito',sans-serif; }
         .nav-link:hover { color: #3D2A0E; background: rgba(252,230,139,0.3); }
         .nav-link.active { color: #6B4520; background: rgba(252,230,139,0.4); }
-        .nav-cta { display: flex; align-items: center; }
-        .nav-user { display: flex; align-items: center; gap: 10px; }
-        .nav-user-name { font-family: 'Fredoka',sans-serif; font-size: 15px; font-weight: 600; color: #6B4520; padding: 8px 14px; background: rgba(252,230,139,0.4); border-radius: 100px; }
+        .nav-right { display: flex; align-items: center; gap: 10px; }
+        .nav-user-name { font-family: 'Fredoka',sans-serif; font-size: 15px; color: #6B4520; padding: 8px 14px; background: rgba(252,230,139,0.4); border-radius: 100px; }
+        .nav-logout { background: none; border: 1.5px solid #E8D9B8; border-radius: 100px; padding: 8px 16px; font-family: 'Nunito',sans-serif; font-size: 14px; color: #8C6D45; cursor: pointer; transition: all 0.2s; }
+        .nav-logout:hover { border-color: #C8934A; color: #6B4520; }
         .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
         .ham-line { display: block; width: 22px; height: 2px; background: #6B4520; margin: 5px 0; border-radius: 2px; }
         .mobile-menu { position: fixed; top: 68px; left: 0; right: 0; z-index: 99; background: #FFFDF5; border-bottom: 1px solid #E8D9B8; padding: 16px 24px 24px; transform: translateY(-110%); transition: transform 0.3s ease; }
         .mobile-menu.open { transform: translateY(0); }
         .mobile-link { display: block; padding: 14px 0; font-size: 18px; font-family: 'Fredoka',sans-serif; font-weight: 600; color: #3D2A0E; border-bottom: 1px solid #E8D9B8; }
-        @media (max-width: 768px) { .nav-links, .nav-cta, .nav-user { display: none; } .hamburger { display: block; } }
+        @media (max-width: 768px) { .nav-links, .nav-right { display: none; } .hamburger { display: block; } }
       `}</style>
 
       <nav className="nav">
@@ -72,15 +79,16 @@ export default function Navbar() {
             )}
           </div>
 
-          {session ? (
-            <div className="nav-user">
-              <span className="nav-user-name">🦊 {nombre}</span>
-            </div>
-          ) : (
-            <div className="nav-cta">
+          <div className="nav-right">
+            {session ? (
+              <>
+                <span className="nav-user-name">🦊 {nombre}</span>
+                <button className="nav-logout" onClick={handleLogout}>Salir</button>
+              </>
+            ) : (
               <Link href="/registro" className="btn btn-primary" style={{ padding: '10px 20px', fontSize: 14 }}>Empezar gratis ✦</Link>
-            </div>
-          )}
+            )}
+          </div>
 
           <button className="hamburger" onClick={() => setOpen(!open)}>
             <span className="ham-line" /><span className="ham-line" /><span className="ham-line" />
@@ -92,10 +100,18 @@ export default function Navbar() {
         {links.map(l => (
           <Link key={l.href} href={l.href} className="mobile-link" onClick={() => setOpen(false)}>{l.label}</Link>
         ))}
-        {session
-          ? <Link href="/dashboard" className="mobile-link" onClick={() => setOpen(false)}>Mi cuenta</Link>
-          : <Link href="/registro" className="btn btn-primary" style={{ marginTop: 16, width: '100%', justifyContent: 'center' }} onClick={() => setOpen(false)}>Empezar gratis ✦</Link>
-        }
+        {session ? (
+          <>
+            <Link href="/dashboard" className="mobile-link" onClick={() => setOpen(false)}>Mi cuenta</Link>
+            <button onClick={() => { handleLogout(); setOpen(false) }} style={{ marginTop: 16, width: '100%', padding: '14px', borderRadius: 100, border: '2px solid #E8D9B8', background: 'transparent', fontFamily: "'Fredoka',sans-serif", fontSize: 16, color: '#8C6D45', cursor: 'pointer' }}>
+              Cerrar sesión
+            </button>
+          </>
+        ) : (
+          <Link href="/registro" className="btn btn-primary" style={{ marginTop: 16, width: '100%', justifyContent: 'center' }} onClick={() => setOpen(false)}>
+            Empezar gratis ✦
+          </Link>
+        )}
       </div>
     </>
   )
