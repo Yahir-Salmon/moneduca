@@ -7,7 +7,7 @@ const SUGGESTIONS = ['¿Qué es un presupuesto?', '¿Cómo empiezo a ahorrar?', 
 
 export default function Chatbot() {
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: '¡Hola! 👋 Soy tu asistente de finanzas. Puedo explicarte cualquier duda sobre ahorro, presupuestos, crédito o inversión. ¿Qué quieres aprender hoy?' }
+    { role: 'assistant', content: '¡Hola! Soy Monedoki 🦊 Tu guía de finanzas personales. Puedo explicarte cualquier duda sobre ahorro, presupuestos, crédito o inversión. ¿Qué quieres aprender hoy?' }
   ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -37,55 +37,84 @@ export default function Chatbot() {
   return (
     <>
       <style>{`
-        .chatbot { background: white; border-radius: 24px; border: 1.5px solid #E5E7EB; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.08); display: flex; flex-direction: column; height: 500px; }
-        .chat-hdr { background: #0D0D0D; padding: 16px 20px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
-        .chat-avatar { width: 36px; height: 36px; background: #00C896; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-        .chat-hdr-name { font-family: 'Fredoka',sans-serif; font-weight: 700; color: white; font-size: 15px; }
-        .chat-hdr-status { font-size: 12px; color: #00C896; display: flex; align-items: center; gap: 5px; }
-        .status-dot { width: 7px; height: 7px; background: #00C896; border-radius: 50%; animation: pulse 2s infinite; }
+        .chatbot { background: #FFFDF5; border-radius: 24px; border: 1px solid #E8D9B8; overflow: hidden; box-shadow: 6px 6px 0px rgba(145,99,47,0.1); display: flex; flex-direction: column; height: 500px; }
+        .chat-hdr { background: #3D2A0E; padding: 16px 20px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+        .chat-avatar { width: 44px; height: 44px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: rgba(250,191,77,0.2); display: flex; align-items: center; justify-content: center; }
+        .chat-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .chat-hdr-name { font-family: 'Fredoka',sans-serif; font-weight: 600; color: #FCE68B; font-size: 16px; }
+        .chat-hdr-status { font-size: 12px; color: rgba(252,230,139,0.6); display: flex; align-items: center; gap: 5px; font-family: 'Nunito',sans-serif; }
+        .status-dot { width: 7px; height: 7px; background: rgba(250,191,77,1); border-radius: 50%; animation: pulse 2s infinite; }
         @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.4);opacity:0.7} }
         .chat-msgs { flex: 1; overflow-y: auto; padding: 20px 16px; display: flex; flex-direction: column; gap: 12px; }
         .chat-msgs::-webkit-scrollbar { width: 4px; }
-        .chat-msgs::-webkit-scrollbar-thumb { background: #E5E7EB; border-radius: 2px; }
-        .msg { max-width: 85%; font-size: 14px; line-height: 1.6; }
-        .msg-user { align-self: flex-end; background: #0D0D0D; color: white; padding: 10px 16px; border-radius: 18px 18px 4px 18px; }
-        .msg-bot { align-self: flex-start; background: #F4F4F6; color: #0D0D0D; padding: 10px 16px; border-radius: 18px 18px 18px 4px; }
-        .typing { align-self: flex-start; background: #F4F4F6; padding: 12px 16px; border-radius: 18px 18px 18px 4px; display: flex; gap: 5px; }
-        .typing-dot { width: 7px; height: 7px; background: #9CA3AF; border-radius: 50%; animation: bounce 1.2s infinite; }
+        .chat-msgs::-webkit-scrollbar-thumb { background: #E8D9B8; border-radius: 2px; }
+        .msg { max-width: 85%; font-size: 14px; line-height: 1.6; font-family: 'Nunito',sans-serif; }
+        .msg-user { align-self: flex-end; background: #6B4520; color: #FCE68B; padding: 10px 16px; border-radius: 18px 18px 4px 18px; }
+        .msg-bot-wrap { align-self: flex-start; display: flex; align-items: flex-end; gap: 8px; max-width: 85%; }
+        .msg-bot-avatar { width: 28px; height: 28px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: rgba(250,191,77,0.2); display: flex; align-items: center; justify-content: center; font-size: 14px; }
+        .msg-bot-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .msg-bot { background: rgba(252,230,139,0.25); color: #3D2A0E; padding: 10px 16px; border-radius: 18px 18px 18px 4px; border: 1px solid rgba(232,217,184,0.5); }
+        .typing { align-self: flex-start; display: flex; align-items: flex-end; gap: 8px; }
+        .typing-bubble { background: rgba(252,230,139,0.25); padding: 12px 16px; border-radius: 18px 18px 18px 4px; display: flex; gap: 5px; border: 1px solid rgba(232,217,184,0.5); }
+        .typing-dot { width: 7px; height: 7px; background: #C8934A; border-radius: 50%; animation: bounce 1.2s infinite; }
         .typing-dot:nth-child(2){animation-delay:0.2s} .typing-dot:nth-child(3){animation-delay:0.4s}
         @keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
-        .chat-sugg { padding: 8px 16px; display: flex; gap: 8px; flex-wrap: wrap; border-top: 1px solid #F4F4F6; flex-shrink: 0; }
-        .sugg-btn { font-size: 12px; padding: 6px 12px; background: #F4F4F6; border: none; border-radius: 100px; cursor: pointer; color: #0D0D0D; transition: all 0.2s; white-space: nowrap; font-family: 'Nunito',sans-serif; }
-        .sugg-btn:hover { background: #D4F5EB; color: #009970; }
-        .chat-input-row { padding: 12px 16px; border-top: 1.5px solid #E5E7EB; display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
-        .chat-input { flex: 1; border: 1.5px solid #E5E7EB; border-radius: 100px; padding: 10px 18px; font-size: 14px; font-family: 'Nunito',sans-serif; outline: none; transition: border 0.2s; background: #FAFAFA; color: #0D0D0D; }
-        .chat-input:focus { border-color: #00C896; background: white; }
-        .chat-send { width: 40px; height: 40px; background: #0D0D0D; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; font-size: 16px; }
-        .chat-send:hover { background: #00C896; transform: scale(1.05); }
+        .chat-sugg { padding: 8px 14px; display: flex; gap: 8px; flex-wrap: wrap; border-top: 1px solid #E8D9B8; flex-shrink: 0; background: rgba(252,230,139,0.05); }
+        .sugg-btn { font-size: 12px; padding: 6px 12px; background: rgba(252,230,139,0.3); border: 1px solid rgba(232,217,184,0.8); border-radius: 100px; cursor: pointer; color: #6B4520; transition: all 0.2s; white-space: nowrap; font-family: 'Nunito',sans-serif; font-weight: 600; }
+        .sugg-btn:hover { background: rgba(250,191,77,0.4); }
+        .chat-input-row { padding: 12px 14px; border-top: 1px solid #E8D9B8; display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+        .chat-input { flex: 1; border: 1.5px solid #E8D9B8; border-radius: 100px; padding: 10px 16px; font-size: 14px; font-family: 'Nunito',sans-serif; outline: none; transition: border 0.2s; background: #FFF8E8; color: #3D2A0E; }
+        .chat-input:focus { border-color: rgba(250,191,77,1); background: white; }
+        .chat-send { width: 38px; height: 38px; background: #6B4520; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; font-size: 15px; }
+        .chat-send:hover { background: #3D2A0E; transform: scale(1.05); }
         .chat-send:disabled { opacity: 0.4; cursor: default; transform: none; }
       `}</style>
       <div className="chatbot">
         <div className="chat-hdr">
-          <div className="chat-avatar">🤖</div>
+          <div className="chat-avatar">
+            <img src="/monedoki-feliz.png" alt="Monedoki" onError={e => { (e.target as HTMLImageElement).style.display='none'; (e.target as HTMLImageElement).parentElement!.innerHTML='🦊' }} />
+          </div>
           <div>
-            <div className="chat-hdr-name">Asistente Moneduca</div>
+            <div className="chat-hdr-name">Monedoki</div>
             <div className="chat-hdr-status"><span className="status-dot" /> En línea</div>
           </div>
         </div>
+
         <div className="chat-msgs" ref={messagesRef}>
           {messages.map((m, i) => (
-            <div key={i} className={`msg ${m.role === 'user' ? 'msg-user' : 'msg-bot'}`}>{m.content}</div>
+            m.role === 'user' ? (
+              <div key={i} className="msg msg-user">{m.content}</div>
+            ) : (
+              <div key={i} className="msg-bot-wrap">
+                <div className="msg-bot-avatar">
+                  <img src="/monedoki-neutral.png" alt="" onError={e => { (e.target as HTMLImageElement).style.display='none'; (e.target as HTMLImageElement).parentElement!.innerHTML='🦊' }} />
+                </div>
+                <div className="msg msg-bot">{m.content}</div>
+              </div>
+            )
           ))}
-          {loading && <div className="typing"><span className="typing-dot"/><span className="typing-dot"/><span className="typing-dot"/></div>}
+          {loading && (
+            <div className="typing">
+              <div className="msg-bot-avatar">
+                <img src="/monedoki-pensar.png" alt="" onError={e => { (e.target as HTMLImageElement).style.display='none'; (e.target as HTMLImageElement).parentElement!.innerHTML='🦊' }} />
+              </div>
+              <div className="typing-bubble">
+                <span className="typing-dot"/><span className="typing-dot"/><span className="typing-dot"/>
+              </div>
+            </div>
+          )}
         </div>
+
         {messages.length <= 1 && (
           <div className="chat-sugg">
             {SUGGESTIONS.map(s => <button key={s} className="sugg-btn" onClick={() => send(s)}>{s}</button>)}
           </div>
         )}
+
         <div className="chat-input-row">
           <input className="chat-input" value={input} onChange={e => setInput(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && send(input)} placeholder="Escribe tu pregunta..." disabled={loading} />
+            onKeyDown={e => e.key === 'Enter' && send(input)}
+            placeholder="Pregúntale algo a Monedoki..." disabled={loading} />
           <button className="chat-send" onClick={() => send(input)} disabled={loading || !input.trim()}>➤</button>
         </div>
       </div>
