@@ -204,7 +204,7 @@ export default function LeccionPage() {
     <>
       <style>{`
         .lec-wrap { min-height: 100vh; background: #FFF8E8; display: flex; flex-direction: column; }
-        .lec-header { background: #FFFDF5; border-bottom: 1px solid #E8D9B8; padding: 14px 24px; display: flex; align-items: center; gap: 14px; position: sticky; top: 0; z-index: 10; }
+        .lec-header { background: #FFFDF5; border-bottom: 1px solid #E8D9B8; padding: 14px 24px; display: flex; align-items: center; gap: 14px; position: sticky; top: 68px; z-index: 10; }
         .lec-titulo { font-family: 'Fredoka',sans-serif; font-size: 16px; font-weight: 600; color: #3D2A0E; white-space: nowrap; }
         .prog-wrap { flex: 1; height: 12px; background: rgba(232,217,184,0.5); border-radius: 100px; overflow: hidden; }
         .prog-fill { height: 100%; background: #6B4520; border-radius: 100px; transition: width 0.4s ease; }
