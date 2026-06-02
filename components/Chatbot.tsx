@@ -1,5 +1,6 @@
 'use client'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
+import { supabase } from '@/lib/supabase'
 
 interface Message { role: 'user' | 'assistant'; content: string }
 
@@ -11,7 +12,20 @@ export default function Chatbot() {
   ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [userName, setUserName] = useState<string | null>(null)
   const messagesRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        const n = session.user.user_metadata?.nombre || session.user.user_metadata?.full_name || session.user.user_metadata?.name || null
+        setUserName(n)
+        if (n) {
+          setMessages([{ role: 'assistant', content: `¡Hola, ${n}! Soy Monedoki 🦊 Tu guía de finanzas. ¿En qué te puedo ayudar hoy?` }])
+        }
+      }
+    })
+  }, [])
 
   const send = async (text: string) => {
     if (!text.trim() || loading) return
@@ -23,15 +37,13 @@ export default function Chatbot() {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: [...messages, userMsg] }),
+        body: JSON.stringify({ messages: [...messages, userMsg], userName }),
       })
       const data = await res.json()
       setMessages(prev => [...prev, { role: 'assistant', content: data.content }])
     } catch {
       setMessages(prev => [...prev, { role: 'assistant', content: 'Lo siento, hubo un error. Intenta de nuevo.' }])
-    } finally {
-      setLoading(false)
-    }
+    } finally { setLoading(false) }
   }
 
   return (
@@ -79,7 +91,6 @@ export default function Chatbot() {
             <div className="chat-hdr-status"><span className="status-dot" /> En línea</div>
           </div>
         </div>
-
         <div className="chat-msgs" ref={messagesRef}>
           {messages.map((m, i) => (
             m.role === 'user' ? (
@@ -104,13 +115,11 @@ export default function Chatbot() {
             </div>
           )}
         </div>
-
         {messages.length <= 1 && (
           <div className="chat-sugg">
             {SUGGESTIONS.map(s => <button key={s} className="sugg-btn" onClick={() => send(s)}>{s}</button>)}
           </div>
         )}
-
         <div className="chat-input-row">
           <input className="chat-input" value={input} onChange={e => setInput(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && send(input)}
