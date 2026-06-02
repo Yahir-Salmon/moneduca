@@ -162,7 +162,7 @@ export default function HomePage() {
         </div>
         <div className="modulos-grid">
           {modulos.map((m, i) => (
-            <Link key={i} href="/cursos" className="modulo-card">
+            <Link key={i} href={`/cursos#${['bases','presupuesto','inversiones','tarjetas','impuestos','estafas'][i]}`} className="modulo-card">
               <div className="modulo-icon" style={{ background: m.color }}>{m.emoji}</div>
               <div className="modulo-nivel" style={{ background: m.color, color: m.accent }}>{m.nivel}</div>
               <h3 className="modulo-titulo">{m.titulo}</h3>
