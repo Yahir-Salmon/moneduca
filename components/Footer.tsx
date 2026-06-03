@@ -53,7 +53,7 @@ export default function Footer() {
             </div>
           </div>
           <div className="footer-bottom">
-            <p>© 2025 <span style={{ color: 'rgba(252,230,139,1)' }}>Moneduca</span>. Todos los derechos reservados.</p>
+            <p>© 2026 <span style={{ color: 'rgba(252,230,139,1)' }}>Moneduca</span>. Todos los derechos reservados.</p>
             <span className="footer-mascot">🦊</span>
             <p style={{ color: '#A87840' }}>Hecho con ❤️ para jóvenes mexicanos</p>
           </div>
