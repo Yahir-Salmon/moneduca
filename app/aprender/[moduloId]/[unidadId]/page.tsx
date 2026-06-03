@@ -13,7 +13,6 @@ interface Pregunta {
   opciones: string[] | { items: string[]; definitions: string[] }
   respuesta_correcta: string
   explicacion: string
-  dato_curioso: string | null
 }
 
 interface Contenido {
@@ -33,6 +32,12 @@ const MONEDOKI_POSES: Record<string, string> = {
 }
 
 const POSES_ROTACION: (keyof typeof MONEDOKI_POSES)[] = ['neutral', 'pensar', 'sorpresa', 'neutral', 'pensar', 'sorpresa', 'neutral']
+
+// Mezcla las opciones y devuelve {opciones mezcladas, nueva respuesta correcta}
+function shuffleOpciones(opciones: string[], respuestaCorrecta: string): { opciones: string[]; respuesta: string } {
+  const mezcladas = [...opciones].sort(() => Math.random() - 0.5)
+  return { opciones: mezcladas, respuesta: respuestaCorrecta }
+}
 
 function playSound(type: 'correct' | 'incorrect' | 'complete') {
   try {
@@ -62,20 +67,20 @@ function playSound(type: 'correct' | 'incorrect' | 'complete') {
 function getContenidoPlantilla(unidadId: string, idx: number): Contenido | null {
   const contenidos: Record<string, Contenido[]> = {
     'bases-1': [
-      { tipo: 'intro', titulo: '¿Qué es el dinero?', texto: 'El dinero es una herramienta que los seres humanos inventamos para facilitar el intercambio de bienes y servicios. Antes de que existiera, las personas usaban el trueque: intercambiaban directamente lo que tenían por lo que necesitaban.\n\nImagina que eres agricultor y tienes manzanas, pero necesitas zapatos. Con el trueque, tendrías que encontrar a un zapatero que quisiera manzanas exactamente cuando tú necesitas zapatos. ¡Complicado! El dinero resolvió ese problema al crear un intermediario universal que todos aceptamos como forma de pago.' },
-      { tipo: 'dato', titulo: '💡 Dato curioso', texto: 'Las primeras formas de dinero no eran monedas ni billetes. En diferentes culturas se usaron conchas marinas, dientes de ballena, piedras enormes, sal (de ahí viene la palabra "salario") e incluso ganado.\n\nLo importante no era el material, sino que todos en esa comunidad acordaban que ese objeto tenía valor.' },
+      { tipo: 'intro', titulo: '¿Qué es el dinero?', texto: 'El dinero es una herramienta que los seres humanos inventamos para facilitar el intercambio de bienes y servicios. Antes de que existiera, las personas usaban el trueque: intercambiaban directamente lo que tenían por lo que necesitaban.\n\nImagina que eres agricultor y tienes manzanas, pero necesitas zapatos. Con el trueque, tendrías que encontrar a un zapatero que quisiera manzanas exactamente cuando tú necesitas zapatos. El dinero resolvió ese problema al crear un intermediario universal que todos aceptamos como forma de pago.' },
+      { tipo: 'dato', titulo: '¿Sabías que...?', texto: 'Las primeras formas de dinero no eran monedas ni billetes. En diferentes culturas se usaron conchas marinas, dientes de ballena, piedras enormes y sal. De ahí viene la palabra "salario".\n\nLo importante no era el material, sino que todos en esa comunidad acordaban que ese objeto tenía valor.' },
     ],
     'bases-2': [
-      { tipo: 'intro', titulo: 'El trueque y sus problemas', texto: 'Antes del dinero, las sociedades usaban el trueque: intercambiar bienes directamente. Si tenías pescado y querías pan, necesitabas encontrar a alguien con pan que quisiera pescado.\n\nEste sistema tenía un problema enorme llamado "doble coincidencia de necesidades": ambas personas debían querer lo que la otra ofrecía, al mismo tiempo y en cantidades equivalentes.' },
+      { tipo: 'intro', titulo: 'El trueque y sus problemas', texto: 'Antes del dinero, las sociedades usaban el trueque: intercambiar bienes directamente. Si tenías pescado y querías pan, necesitabas encontrar a alguien con pan que quisiera tu pescado.\n\nEste sistema tenía un problema enorme llamado "doble coincidencia de necesidades": ambas personas debían querer lo que la otra ofrecía, al mismo tiempo y en cantidades equivalentes.' },
     ],
     'presupuesto-1': [
-      { tipo: 'intro', titulo: '¿Qué es un presupuesto?', texto: 'Un presupuesto es simplemente un plan para tu dinero. Es decidir de antemano a dónde va a ir cada peso que recibes. Sin un presupuesto, el dinero simplemente "desaparece" sin que sepas exactamente en qué se fue.\n\nHacer un presupuesto tiene tres pasos básicos: primero conocer tus ingresos, luego identificar tus gastos y finalmente asegurarte de que lo que entra sea mayor que lo que sale.' },
-      { tipo: 'consejo', titulo: '✅ Consejo práctico', texto: 'Para hacer tu primer presupuesto, lleva un registro de todo lo que gastas durante una semana. Anota cada compra, por pequeña que sea: el chicle de $5, el transporte, la comida.\n\nAl final de la semana te sorprenderá ver a dónde fue tu dinero. Ese es el primer paso para controlarlo.' },
+      { tipo: 'intro', titulo: '¿Qué es un presupuesto?', texto: 'Un presupuesto es simplemente un plan para tu dinero. Es decidir de antemano a dónde va a ir cada peso que recibes. Sin un presupuesto, el dinero simplemente desaparece sin que sepas en qué se fue.\n\nHacer un presupuesto tiene tres pasos básicos: primero conocer tus ingresos, luego identificar tus gastos y finalmente asegurarte de que lo que entra sea mayor que lo que sale.' },
+      { tipo: 'consejo', titulo: 'Consejo práctico', texto: 'Para hacer tu primer presupuesto, lleva un registro de todo lo que gastas durante una semana. Anota cada compra, por pequeña que sea: el transporte, la comida, el antojo.\n\nAl final de la semana te sorprenderá ver a dónde fue tu dinero. Ese es el primer paso para controlarlo.' },
     ],
   }
   const plantilla: Contenido[] = contenidos[unidadId] || [
-    { tipo: 'intro', titulo: 'Introducción al tema', texto: 'En esta unidad exploraremos conceptos fundamentales de finanzas personales. El conocimiento financiero es una habilidad para toda la vida.\n\nLee con atención y reflexiona cómo estos conceptos aplican a tu vida diaria. Las preguntas que siguen te ayudarán a verificar que lo entendiste.' },
-    { tipo: 'dato', titulo: '💡 ¿Sabías que...?', texto: 'La mayoría de los adultos nunca recibió educación financiera formal. Aprender estas habilidades ahora te pone en una posición privilegiada.\n\nEstudios muestran que las personas con conocimientos financieros básicos toman mejores decisiones, tienen menos deudas y logran sus metas más rápido.' },
+    { tipo: 'intro', titulo: 'Introducción al tema', texto: 'En esta unidad exploraremos conceptos fundamentales de finanzas personales. El conocimiento financiero es una habilidad para toda la vida — no importa cuánto dinero tengas ahora, entender cómo funciona te dará ventajas enormes en el futuro.\n\nLee con atención y reflexiona cómo estos conceptos aplican a tu vida diaria.' },
+    { tipo: 'dato', titulo: 'Contexto importante', texto: 'La mayoría de los adultos nunca recibió educación financiera formal. Aprender estas habilidades ahora te pone en una posición privilegiada.\n\nEstudios muestran que las personas con conocimientos financieros básicos toman mejores decisiones, tienen menos deudas y logran sus metas más rápido.' },
   ]
   return idx < plantilla.length ? plantilla[idx] : null
 }
@@ -108,13 +113,36 @@ export default function LeccionPage() {
       setUserId(user.id)
       const { data: unidad } = await supabase.from('unidades').select('nombre').eq('id', unidadId).single()
       if (unidad) setUnidadNombre(unidad.nombre)
-      const { data: progreso } = await supabase.from('progreso_unidad').select('nivel_actual').eq('user_id', user.id).eq('unidad_id', unidadId).single()
-      const nivel = progreso?.nivel_actual || 1
+      const { data: prog } = await supabase.from('progreso_unidad').select('nivel_actual').eq('user_id', user.id).eq('unidad_id', unidadId).single()
+      const nivel = prog?.nivel_actual || 1
       const { data: banco } = await supabase.from('preguntas').select('*').eq('unidad_id', unidadId).lte('dificultad', Math.min(nivel + 1, 3))
       if (banco && banco.length > 0) {
-        const mezcladas = banco.sort(() => Math.random() - 0.5).slice(0, Math.min(7, banco.length))
-          .map(p => ({ ...p, opciones: typeof p.opciones === 'string' ? JSON.parse(p.opciones) : p.opciones }))
-        setPreguntas(mezcladas)
+        // Asegurar variedad de tipos: tomar al menos 1 de cada tipo disponible
+        const porTipo: Record<string, typeof banco> = {}
+        banco.forEach(p => {
+          if (!porTipo[p.tipo]) porTipo[p.tipo] = []
+          porTipo[p.tipo].push(p)
+        })
+        let seleccionadas: typeof banco = []
+        // Primero tomar 1 de cada tipo
+        Object.values(porTipo).forEach(grupo => {
+          const rand = grupo[Math.floor(Math.random() * grupo.length)]
+          seleccionadas.push(rand)
+        })
+        // Completar hasta 7 con el resto mezclado
+        const restantes = banco.filter(p => !seleccionadas.find(s => s.id === p.id)).sort(() => Math.random() - 0.5)
+        seleccionadas = [...seleccionadas, ...restantes].slice(0, 7).sort(() => Math.random() - 0.5)
+
+        // Mezclar opciones para preguntas de opción múltiple, completar y V/F
+        const procesadas = seleccionadas.map(p => {
+          const opciones = typeof p.opciones === 'string' ? JSON.parse(p.opciones) : p.opciones
+          if (['multiple', 'completar', 'verdadero_falso'].includes(p.tipo) && Array.isArray(opciones)) {
+            const { opciones: mezcladas } = shuffleOpciones(opciones, p.respuesta_correcta)
+            return { ...p, opciones: mezcladas }
+          }
+          return { ...p, opciones }
+        })
+        setPreguntas(procesadas)
       }
       setLoading(false)
     }
@@ -135,8 +163,7 @@ export default function LeccionPage() {
   }
 
   const handleConfirmarTipo = (correcto: boolean) => {
-    setConfirmada(true)
-    setEsCorrecta(correcto)
+    setConfirmada(true); setEsCorrecta(correcto)
     if (correcto) { setCorrectas(prev => prev + 1); setMonedokiPose('feliz'); playSound('correct') }
     else { setErrores(prev => prev + 1); setMonedokiPose(errores >= 2 ? 'triste' : 'animo'); playSound('incorrect') }
     setFase('feedback')
@@ -161,8 +188,7 @@ export default function LeccionPage() {
       else { setMonedokiPose('animo'); setFase('repaso') }
     } else {
       const nextIdx = indice + 1
-      setIndice(nextIdx)
-      setSeleccionada(null); setConfirmada(false); setEsCorrecta(false)
+      setIndice(nextIdx); setSeleccionada(null); setConfirmada(false); setEsCorrecta(false)
       const nextContenido = getContenidoPlantilla(unidadId, contenidoIdx + 1)
       if (nextIdx % 3 === 0 && nextContenido) {
         setContenidoIdx(prev => prev + 1); setFase('contenido')
@@ -173,7 +199,13 @@ export default function LeccionPage() {
   }
 
   const handleReintentar = () => {
-    setPreguntas(prev => [...prev].sort(() => Math.random() - 0.5))
+    setPreguntas(prev => [...prev].sort(() => Math.random() - 0.5).map(p => {
+      if (['multiple', 'completar', 'verdadero_falso'].includes(p.tipo) && Array.isArray(p.opciones)) {
+        const { opciones } = shuffleOpciones(p.opciones as string[], p.respuesta_correcta)
+        return { ...p, opciones }
+      }
+      return p
+    }))
     setIndice(0); setSeleccionada(null); setConfirmada(false); setEsCorrecta(false)
     setCorrectas(0); setErrores(0); setFase('contenido')
     setMonedokiPose('neutral'); setGuardado(false); setContenidoIdx(0)
@@ -199,48 +231,58 @@ export default function LeccionPage() {
     <>
       <style>{`
         .lec-wrap { min-height: 100vh; background: #FFF8E8; display: flex; flex-direction: column; }
-        .lec-header { background: #FFFDF5; border-bottom: 1px solid #E8D9B8; padding: 14px 24px; display: flex; align-items: center; gap: 14px; position: sticky; top: 68px; z-index: 10; }
-        .lec-titulo { font-family: 'Fredoka',sans-serif; font-size: 15px; font-weight: 600; color: #3D2A0E; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px; }
+        .lec-header { background: #FFFDF5; border-bottom: 1px solid #E8D9B8; padding: 12px 20px; display: flex; align-items: center; gap: 12px; position: sticky; top: 68px; z-index: 10; }
+        .lec-titulo { font-family: 'Fredoka',sans-serif; font-size: 14px; font-weight: 600; color: #3D2A0E; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; flex-shrink: 0; }
         .prog-wrap { flex: 1; height: 10px; background: rgba(232,217,184,0.5); border-radius: 100px; overflow: hidden; }
         .prog-fill { height: 100%; background: #6B4520; border-radius: 100px; transition: width 0.4s ease; }
-        .prog-label { font-family: 'Fredoka',sans-serif; font-size: 13px; color: #8C6D45; white-space: nowrap; }
-        .lec-body { flex: 1; max-width: 860px; margin: 0 auto; padding: 36px 24px; width: 100%; }
-        .preg-layout { display: grid; grid-template-columns: 1fr 180px; gap: 32px; align-items: start; }
-        .preg-right { display: flex; justify-content: center; padding-top: 8px; position: sticky; top: 130px; }
-        .mk-side { width: 150px; height: 150px; object-fit: contain; transition: all 0.4s ease; }
-        .preg-text { font-family: 'Fredoka',sans-serif; font-size: 21px; font-weight: 600; color: #3D2A0E; margin-bottom: 22px; line-height: 1.3; }
-        .opciones { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
-        .op-btn { text-align: left; padding: 14px 18px; border-radius: 14px; border: 2px solid #E8D9B8; background: #FFFDF5; font-family: 'Nunito',sans-serif; font-size: 15px; color: #3D2A0E; cursor: pointer; transition: all 0.15s; line-height: 1.4; }
+        .prog-label { font-family: 'Fredoka',sans-serif; font-size: 13px; color: #8C6D45; white-space: nowrap; flex-shrink: 0; }
+        /* Body con scroll propio */
+        .lec-body { flex: 1; overflow-y: auto; }
+        .lec-inner { max-width: 860px; margin: 0 auto; padding: 28px 24px 60px; }
+        /* Layout pregunta */
+        .preg-layout { display: grid; grid-template-columns: 1fr 160px; gap: 28px; align-items: start; }
+        .preg-right { display: flex; justify-content: center; padding-top: 8px; }
+        .mk-side { width: 140px; height: 140px; object-fit: contain; transition: all 0.4s ease; }
+        .preg-text { font-family: 'Fredoka',sans-serif; font-size: 20px; font-weight: 600; color: #3D2A0E; margin-bottom: 20px; line-height: 1.3; }
+        .opciones { display: flex; flex-direction: column; gap: 9px; margin-bottom: 16px; }
+        .op-btn { text-align: left; padding: 13px 16px; border-radius: 14px; border: 2px solid #E8D9B8; background: #FFFDF5; font-family: 'Nunito',sans-serif; font-size: 15px; color: #3D2A0E; cursor: pointer; transition: all 0.15s; line-height: 1.4; }
         .op-btn:hover:not(:disabled) { border-color: #C8934A; background: rgba(252,230,139,0.15); }
         .op-btn.sel { border-color: #6B4520; background: rgba(252,230,139,0.25); }
         .op-btn.ok { border-color: #3B6D11; background: #EAF3DE; color: #27500A; }
         .op-btn.mal { border-color: #993C1D; background: #FAECE7; color: #712B13; }
-        .feedback { border-radius: 14px; padding: 14px 18px; margin-bottom: 18px; font-family: 'Nunito',sans-serif; font-size: 14px; line-height: 1.6; }
+        .feedback { border-radius: 14px; padding: 13px 16px; margin-bottom: 16px; font-family: 'Nunito',sans-serif; font-size: 14px; line-height: 1.6; }
         .fb-ok { background: #EAF3DE; border: 1.5px solid #C0DD97; color: #27500A; }
         .fb-mal { background: #FAECE7; border: 1.5px solid #F0997B; color: #712B13; }
-        .accion-btn { width: 100%; padding: 15px; border-radius: 100px; border: none; font-family: 'Fredoka',sans-serif; font-size: 17px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .accion-btn { width: 100%; padding: 14px; border-radius: 100px; border: none; font-family: 'Fredoka',sans-serif; font-size: 17px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
         .accion-btn.on { background: #6B4520; color: #FCE68B; }
         .accion-btn.on:hover { background: #3D2A0E; transform: translateY(-1px); }
         .accion-btn.off { background: #E8D9B8; color: #A87840; cursor: default; }
         .accion-btn.next { background: #6B4520; color: #FCE68B; }
+        /* Contenido */
         .contenido-wrap { max-width: 680px; }
-        .contenido-badge { display: inline-block; font-family: 'Nunito',sans-serif; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; padding: 4px 12px; border-radius: 100px; margin-bottom: 16px; }
+        .contenido-badge { display: inline-block; font-family: 'Nunito',sans-serif; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; padding: 4px 12px; border-radius: 100px; margin-bottom: 14px; }
         .badge-intro { background: rgba(252,230,139,0.5); color: #6B4520; }
         .badge-dato { background: rgba(145,99,47,0.1); color: #8C6D45; }
         .badge-consejo { background: #EAF3DE; color: #3B6D11; }
-        .contenido-titulo { font-family: 'Fredoka',sans-serif; font-size: 26px; font-weight: 600; color: #3D2A0E; margin-bottom: 16px; }
+        .contenido-titulo { font-family: 'Fredoka',sans-serif; font-size: 24px; font-weight: 600; color: #3D2A0E; margin-bottom: 14px; }
         .contenido-texto { font-family: 'Nunito',sans-serif; font-size: 16px; color: #5A3E1B; line-height: 1.85; white-space: pre-line; }
-        .result-wrap { text-align: center; padding: 32px 16px; }
-        .result-stars { font-size: 44px; margin: 12px 0; }
-        .result-h { font-family: 'Fredoka',sans-serif; font-size: 28px; color: #3D2A0E; margin-bottom: 10px; }
-        .result-sub { font-family: 'Nunito',sans-serif; font-size: 15px; color: #8C6D45; margin-bottom: 28px; }
-        .stats-row { display: flex; justify-content: center; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
-        .stat-b { background: #FFFDF5; border: 1px solid #E8D9B8; border-radius: 14px; padding: 14px 20px; text-align: center; }
-        .stat-n { font-family: 'Fredoka',sans-serif; font-size: 28px; color: #6B4520; }
-        .stat-l { font-family: 'Nunito',sans-serif; font-size: 12px; color: #A87840; }
-        .btns-col { display: flex; flex-direction: column; gap: 10px; max-width: 340px; margin: 0 auto; }
-        .sec-btn { padding: 13px; border-radius: 100px; border: 2px solid #E8D9B8; background: transparent; font-family: 'Fredoka',sans-serif; font-size: 15px; color: #8C6D45; cursor: pointer; }
-        @media (max-width: 640px) { .preg-layout { grid-template-columns: 1fr; } .preg-right { display: none; } .preg-text { font-size: 18px; } }
+        /* Resultados */
+        .result-wrap { text-align: center; padding: 24px 16px; }
+        .result-stars { font-size: 44px; margin: 10px 0; }
+        .result-h { font-family: 'Fredoka',sans-serif; font-size: 26px; color: #3D2A0E; margin-bottom: 8px; }
+        .result-sub { font-family: 'Nunito',sans-serif; font-size: 14px; color: #8C6D45; margin-bottom: 24px; }
+        .stats-row { display: flex; justify-content: center; gap: 14px; margin-bottom: 24px; flex-wrap: wrap; }
+        .stat-b { background: #FFFDF5; border: 1px solid #E8D9B8; border-radius: 14px; padding: 12px 18px; text-align: center; }
+        .stat-n { font-family: 'Fredoka',sans-serif; font-size: 26px; color: #6B4520; }
+        .stat-l { font-family: 'Nunito',sans-serif; font-size: 11px; color: #A87840; }
+        .btns-col { display: flex; flex-direction: column; gap: 10px; max-width: 320px; margin: 0 auto; }
+        .sec-btn { padding: 12px; border-radius: 100px; border: 2px solid #E8D9B8; background: transparent; font-family: 'Fredoka',sans-serif; font-size: 15px; color: #8C6D45; cursor: pointer; }
+        @media (max-width: 640px) {
+          .preg-layout { grid-template-columns: 1fr; }
+          .preg-right { display: none; }
+          .preg-text { font-size: 17px; }
+          .lec-titulo { max-width: 120px; }
+        }
       `}</style>
 
       <div className="lec-wrap">
@@ -251,159 +293,139 @@ export default function LeccionPage() {
           <span className="prog-label">{indice + 1}/{preguntas.length}</span>
         </div>
 
-        {/* CONTENIDO */}
-        {fase === 'contenido' && (
-          <div className="lec-body">
-            {contenidoActual ? (
+        <div className="lec-body">
+          <div className="lec-inner">
+
+            {/* CONTENIDO */}
+            {fase === 'contenido' && contenidoActual && (
               <div className="contenido-wrap">
                 <span className={`contenido-badge badge-${contenidoActual.tipo}`}>
-                  {contenidoActual.tipo === 'intro' ? 'Introducción' : contenidoActual.tipo === 'dato' ? '💡 Dato' : '✅ Consejo'}
+                  {contenidoActual.tipo === 'intro' ? 'Introducción' : contenidoActual.tipo === 'dato' ? 'Contexto' : 'Consejo'}
                 </span>
                 <h2 className="contenido-titulo">{contenidoActual.titulo}</h2>
                 <p className="contenido-texto">{contenidoActual.texto}</p>
-                <div style={{ marginTop: 32 }}>
-                  <button className="accion-btn on" style={{ maxWidth: 280 }}
-                    onClick={() => { setFase('pregunta'); setMonedokiPose(POSES_ROTACION[indice % POSES_ROTACION.length]) }}>
+                <div style={{ marginTop: 28 }}>
+                  <button className="accion-btn on" style={{ maxWidth: 260 }}
+                    onClick={() => { setFase('pregunta'); setMonedokiPose(POSES_ROTACION[0]) }}>
                     Continuar →
                   </button>
                 </div>
               </div>
-            ) : (
-              // Sin contenido, ir directo a pregunta
-              <div style={{ display: 'none' }} ref={el => { if (el) { setFase('pregunta'); setMonedokiPose(POSES_ROTACION[indice % POSES_ROTACION.length]) } }} />
             )}
-          </div>
-        )}
 
-        {/* COMPLETADO */}
-        {fase === 'completado' && (
-          <div className="lec-body">
-            <div className="result-wrap">
-              <img src={MONEDOKI_POSES.super} alt="" style={{ width: 120, margin: '0 auto 8px' }} onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
-              <div className="result-stars">⭐⭐⭐</div>
-              <h2 className="result-h">¡Unidad completada!</h2>
-              <p className="result-sub">¡Monedoki está muy orgulloso! Dominaste <strong>{unidadNombre}</strong>.</p>
-              <div className="stats-row">
-                <div className="stat-b"><div className="stat-n">{correctas}</div><div className="stat-l">correctas</div></div>
-                <div className="stat-b"><div className="stat-n">{errores}</div><div className="stat-l">errores</div></div>
-                <div className="stat-b"><div className="stat-n">{Math.round((correctas / preguntas.length) * 100)}%</div><div className="stat-l">puntaje</div></div>
-              </div>
-              <div className="btns-col">
-                <button className="accion-btn on" onClick={() => router.push('/dashboard')}>Ir al inicio 🏠</button>
-                <button className="sec-btn" onClick={handleReintentar}>Practicar de nuevo</button>
-              </div>
-            </div>
-          </div>
-        )}
+            {fase === 'contenido' && !contenidoActual && (() => {
+              setTimeout(() => { setFase('pregunta'); setMonedokiPose(POSES_ROTACION[0]) }, 0)
+              return <div style={{ padding: 40, textAlign: 'center', color: '#A87840', fontFamily: "'Fredoka',sans-serif" }}>Cargando...</div>
+            })()}
 
-        {/* REPASO */}
-        {fase === 'repaso' && (
-          <div className="lec-body">
-            <div className="result-wrap">
-              <img src={MONEDOKI_POSES.animo} alt="" style={{ width: 100, margin: '0 auto 8px' }} onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
-              <h2 className="result-h">¡Casi lo logras!</h2>
-              <p className="result-sub">Obtuviste {Math.round((correctas / preguntas.length) * 100)}%. Necesitas al menos 60%. ¡Monedoki sabe que puedes!</p>
-              <div className="stats-row">
-                <div className="stat-b"><div className="stat-n">{correctas}</div><div className="stat-l">correctas</div></div>
-                <div className="stat-b"><div className="stat-n">{errores}</div><div className="stat-l">errores</div></div>
+            {/* COMPLETADO */}
+            {fase === 'completado' && (
+              <div className="result-wrap">
+                <img src={MONEDOKI_POSES.super} alt="" style={{ width: 110, margin: '0 auto 8px' }} onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
+                <div className="result-stars">⭐⭐⭐</div>
+                <h2 className="result-h">¡Unidad completada!</h2>
+                <p className="result-sub">¡Monedoki está muy orgulloso! Dominaste <strong>{unidadNombre}</strong>.</p>
+                <div className="stats-row">
+                  <div className="stat-b"><div className="stat-n">{correctas}</div><div className="stat-l">correctas</div></div>
+                  <div className="stat-b"><div className="stat-n">{errores}</div><div className="stat-l">errores</div></div>
+                  <div className="stat-b"><div className="stat-n">{Math.round((correctas / preguntas.length) * 100)}%</div><div className="stat-l">puntaje</div></div>
+                </div>
+                <div className="btns-col">
+                  <button className="accion-btn on" onClick={() => router.push('/dashboard')}>Ir al inicio 🏠</button>
+                  <button className="sec-btn" onClick={handleReintentar}>Practicar de nuevo</button>
+                </div>
               </div>
-              <div className="btns-col">
-                <button className="accion-btn on" onClick={handleReintentar}>Intentar de nuevo 💪</button>
-                <button className="sec-btn" onClick={() => router.push('/dashboard')}>Volver al inicio</button>
+            )}
+
+            {/* REPASO */}
+            {fase === 'repaso' && (
+              <div className="result-wrap">
+                <img src={MONEDOKI_POSES.animo} alt="" style={{ width: 100, margin: '0 auto 8px' }} onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
+                <h2 className="result-h">¡Casi lo logras!</h2>
+                <p className="result-sub">Obtuviste {Math.round((correctas / preguntas.length) * 100)}%. Necesitas al menos 60%. ¡Monedoki sabe que puedes!</p>
+                <div className="stats-row">
+                  <div className="stat-b"><div className="stat-n">{correctas}</div><div className="stat-l">correctas</div></div>
+                  <div className="stat-b"><div className="stat-n">{errores}</div><div className="stat-l">errores</div></div>
+                </div>
+                <div className="btns-col">
+                  <button className="accion-btn on" onClick={handleReintentar}>Intentar de nuevo 💪</button>
+                  <button className="sec-btn" onClick={() => router.push('/dashboard')}>Volver al inicio</button>
+                </div>
               </div>
-            </div>
-          </div>
-        )}
+            )}
 
-        {/* PREGUNTA */}
-        {(fase === 'pregunta' || fase === 'feedback') && preguntaActual && (
-          <div className="lec-body">
-            <div className="preg-layout">
-              <div>
-                <p className="preg-text">{preguntaActual.pregunta}</p>
+            {/* PREGUNTA */}
+            {(fase === 'pregunta' || fase === 'feedback') && preguntaActual && (
+              <div className="preg-layout">
+                <div>
+                  <p className="preg-text">{preguntaActual.pregunta}</p>
 
-                {/* MÚLTIPLE / COMPLETAR / VERDADERO-FALSO */}
-                {(preguntaActual.tipo === 'multiple' || preguntaActual.tipo === 'completar' || preguntaActual.tipo === 'verdadero_falso') && (
-                  <>
-                    <div className="opciones">
-                      {(preguntaActual.opciones as string[]).map((op, i) => {
-                        let cls = 'op-btn'
-                        if (confirmada) {
-                          if (op === preguntaActual.respuesta_correcta) cls += ' ok'
-                          else if (op === seleccionada) cls += ' mal'
-                        } else if (op === seleccionada) cls += ' sel'
-                        return (
-                          <button key={i} className={cls} onClick={() => { if (!confirmada) setSeleccionada(op) }} disabled={confirmada}>
-                            {op}
-                          </button>
-                        )
-                      })}
-                    </div>
-                    {fase === 'feedback' && (
+                  {(preguntaActual.tipo === 'multiple' || preguntaActual.tipo === 'completar' || preguntaActual.tipo === 'verdadero_falso') && (
+                    <>
+                      <div className="opciones">
+                        {(preguntaActual.opciones as string[]).map((op, i) => {
+                          let cls = 'op-btn'
+                          if (confirmada) {
+                            if (op === preguntaActual.respuesta_correcta) cls += ' ok'
+                            else if (op === seleccionada) cls += ' mal'
+                          } else if (op === seleccionada) cls += ' sel'
+                          return (
+                            <button key={i} className={cls} onClick={() => { if (!confirmada) setSeleccionada(op) }} disabled={confirmada}>
+                              {op}
+                            </button>
+                          )
+                        })}
+                      </div>
+                      {fase === 'feedback' && (
+                        <div className={`feedback ${esCorrecta ? 'fb-ok' : 'fb-mal'}`}>
+                          <strong>{esCorrecta ? '✅ ¡Correcto!' : '❌ Respuesta incorrecta'}</strong>
+                          <br />{preguntaActual.explicacion}
+                        </div>
+                      )}
+                      {fase === 'pregunta'
+                        ? <button className={`accion-btn ${seleccionada ? 'on' : 'off'}`} onClick={handleConfirmarMultiple} disabled={!seleccionada}>Confirmar respuesta</button>
+                        : <button className="accion-btn next" onClick={handleSiguiente}>{indice + 1 >= preguntas.length ? 'Ver resultados →' : 'Siguiente →'}</button>
+                      }
+                    </>
+                  )}
+
+                  {preguntaActual.tipo === 'ordenar' && fase === 'pregunta' && (
+                    <PreguntaOrdenar opciones={preguntaActual.opciones as string[]} respuestaCorrecta={preguntaActual.respuesta_correcta} onConfirm={handleConfirmarTipo} />
+                  )}
+                  {preguntaActual.tipo === 'ordenar' && fase === 'feedback' && (
+                    <>
                       <div className={`feedback ${esCorrecta ? 'fb-ok' : 'fb-mal'}`}>
-                        <strong>{esCorrecta ? '✅ ¡Correcto!' : '❌ Respuesta incorrecta'}</strong>
+                        <strong>{esCorrecta ? '✅ ¡Orden correcto!' : '❌ El orden no era el correcto'}</strong>
                         <br />{preguntaActual.explicacion}
                       </div>
-                    )}
-                    {fase === 'pregunta'
-                      ? <button className={`accion-btn ${seleccionada ? 'on' : 'off'}`} onClick={handleConfirmarMultiple} disabled={!seleccionada}>Confirmar respuesta</button>
-                      : <button className="accion-btn next" onClick={handleSiguiente}>{indice + 1 >= preguntas.length ? 'Ver resultados →' : 'Siguiente →'}</button>
-                    }
-                  </>
-                )}
+                      <button className="accion-btn next" onClick={handleSiguiente}>{indice + 1 >= preguntas.length ? 'Ver resultados →' : 'Siguiente →'}</button>
+                    </>
+                  )}
 
-                {/* ORDENAR */}
-                {preguntaActual.tipo === 'ordenar' && fase === 'pregunta' && (
-                  <PreguntaOrdenar
-                    opciones={preguntaActual.opciones as string[]}
-                    respuestaCorrecta={preguntaActual.respuesta_correcta}
-                    onConfirm={(correcto) => handleConfirmarTipo(correcto)}
+                  {preguntaActual.tipo === 'drag_and_drop' && fase === 'pregunta' && (
+                    <PreguntaDragDrop opciones={preguntaActual.opciones as { items: string[]; definitions: string[] }} respuestaCorrecta={preguntaActual.respuesta_correcta} onConfirm={handleConfirmarTipo} />
+                  )}
+                  {preguntaActual.tipo === 'drag_and_drop' && fase === 'feedback' && (
+                    <>
+                      <div className={`feedback ${esCorrecta ? 'fb-ok' : 'fb-mal'}`}>
+                        <strong>{esCorrecta ? '✅ ¡Perfecto!' : '❌ Algunas no estaban correctas'}</strong>
+                        <br />{preguntaActual.explicacion}
+                      </div>
+                      <button className="accion-btn next" onClick={handleSiguiente}>{indice + 1 >= preguntas.length ? 'Ver resultados →' : 'Siguiente →'}</button>
+                    </>
+                  )}
+                </div>
+
+                <div className="preg-right">
+                  <img src={MONEDOKI_POSES[monedokiPose]} alt="Monedoki" className="mk-side"
+                    onError={e => { const el = e.target as HTMLImageElement; el.style.display = 'none'; if (el.parentElement) el.parentElement.innerHTML = '<div style="font-size:70px;text-align:center">🦊</div>' }}
                   />
-                )}
-                {preguntaActual.tipo === 'ordenar' && fase === 'feedback' && (
-                  <>
-                    <div className={`feedback ${esCorrecta ? 'fb-ok' : 'fb-mal'}`}>
-                      <strong>{esCorrecta ? '✅ ¡Orden correcto!' : '❌ El orden no era el correcto'}</strong>
-                      <br />{preguntaActual.explicacion}
-                    </div>
-                    <button className="accion-btn next" onClick={handleSiguiente}>{indice + 1 >= preguntas.length ? 'Ver resultados →' : 'Siguiente →'}</button>
-                  </>
-                )}
-
-                {/* DRAG AND DROP */}
-                {preguntaActual.tipo === 'drag_and_drop' && fase === 'pregunta' && (
-                  <PreguntaDragDrop
-                    opciones={preguntaActual.opciones as { items: string[]; definitions: string[] }}
-                    respuestaCorrecta={preguntaActual.respuesta_correcta}
-                    onConfirm={(correcto) => handleConfirmarTipo(correcto)}
-                  />
-                )}
-                {preguntaActual.tipo === 'drag_and_drop' && fase === 'feedback' && (
-                  <>
-                    <div className={`feedback ${esCorrecta ? 'fb-ok' : 'fb-mal'}`}>
-                      <strong>{esCorrecta ? '✅ ¡Perfecto!' : '❌ Algunas no estaban correctas'}</strong>
-                      <br />{preguntaActual.explicacion}
-                    </div>
-                    <button className="accion-btn next" onClick={handleSiguiente}>{indice + 1 >= preguntas.length ? 'Ver resultados →' : 'Siguiente →'}</button>
-                  </>
-                )}
+                </div>
               </div>
+            )}
 
-              <div className="preg-right">
-                <img
-                  src={MONEDOKI_POSES[monedokiPose]}
-                  alt="Monedoki"
-                  className="mk-side"
-                  onError={e => {
-                    const el = e.target as HTMLImageElement
-                    el.style.display = 'none'
-                    if (el.parentElement) el.parentElement.innerHTML = '<div style="font-size:80px;text-align:center">🦊</div>'
-                  }}
-                />
-              </div>
-            </div>
           </div>
-        )}
+        </div>
       </div>
     </>
   )
