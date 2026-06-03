@@ -5,10 +5,14 @@ import Footer from '@/components/Footer'
 
 export const metadata: Metadata = {
   title: 'Moneduca — Finanzas para jóvenes',
-  description: 'Aprende a manejar tu dinero de forma divertida e inteligente. Cursos de finanzas personales diseñados para jóvenes de secundaria.',
+  description:
+    'Aprende a manejar tu dinero de forma divertida e inteligente. Cursos de finanzas personales diseñados para jóvenes de secundaria.',
   icons: {
     icon: '/favicon.ico',
     shortcut: '/favicon.ico',
+  },
+  verification: {
+    google: 'opKmUQFTcZgh9jGOWGulYZDJ8AgQcDHcx32uupzAyc4',
   },
 }
 
