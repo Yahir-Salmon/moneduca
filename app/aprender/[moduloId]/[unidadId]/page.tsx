@@ -33,7 +33,6 @@ const MONEDOKI_POSES: Record<string, string> = {
 
 const POSES_ROTACION: (keyof typeof MONEDOKI_POSES)[] = ['neutral', 'pensar', 'sorpresa', 'neutral', 'pensar', 'sorpresa', 'neutral']
 
-// Mezcla las opciones y devuelve {opciones mezcladas, nueva respuesta correcta}
 function shuffleOpciones(opciones: string[], respuestaCorrecta: string): { opciones: string[]; respuesta: string } {
   const mezcladas = [...opciones].sort(() => Math.random() - 0.5)
   return { opciones: mezcladas, respuesta: respuestaCorrecta }
@@ -68,7 +67,7 @@ function getContenidoPlantilla(unidadId: string, idx: number): Contenido | null 
   const contenidos: Record<string, Contenido[]> = {
     'bases-1': [
       { tipo: 'intro', titulo: '¿Qué es el dinero?', texto: 'El dinero es una herramienta que los seres humanos inventamos para facilitar el intercambio de bienes y servicios. Antes de que existiera, las personas usaban el trueque: intercambiaban directamente lo que tenían por lo que necesitaban.\n\nImagina que eres agricultor y tienes manzanas, pero necesitas zapatos. Con el trueque, tendrías que encontrar a un zapatero que quisiera manzanas exactamente cuando tú necesitas zapatos. El dinero resolvió ese problema al crear un intermediario universal que todos aceptamos como forma de pago.' },
-      { tipo: 'dato', titulo: '¿Sabías que...?', texto: 'Las primeras formas de dinero no eran monedas ni billetes. En diferentes culturas se usaron conchas marinas, dientes de ballena, piedras enormes y sal. De ahí viene la palabra "salario".\n\nLo importante no era el material, sino que todos en esa comunidad acordaban que ese objeto tenía valor.' },
+      { tipo: 'dato', titulo: 'Contexto histórico', texto: 'Las primeras formas de dinero no eran monedas ni billetes. En diferentes culturas se usaron conchas marinas, dientes de ballena, piedras enormes y sal. De ahí viene la palabra "salario".\n\nLo importante no era el material, sino que todos en esa comunidad acordaban que ese objeto tenía valor.' },
     ],
     'bases-2': [
       { tipo: 'intro', titulo: 'El trueque y sus problemas', texto: 'Antes del dinero, las sociedades usaban el trueque: intercambiar bienes directamente. Si tenías pescado y querías pan, necesitabas encontrar a alguien con pan que quisiera tu pescado.\n\nEste sistema tenía un problema enorme llamado "doble coincidencia de necesidades": ambas personas debían querer lo que la otra ofrecía, al mismo tiempo y en cantidades equivalentes.' },
@@ -111,29 +110,29 @@ export default function LeccionPage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { router.push('/registro'); return }
       setUserId(user.id)
+
       const { data: unidad } = await supabase.from('unidades').select('nombre').eq('id', unidadId).single()
       if (unidad) setUnidadNombre(unidad.nombre)
+
       const { data: prog } = await supabase.from('progreso_unidad').select('nivel_actual').eq('user_id', user.id).eq('unidad_id', unidadId).single()
       const nivel = prog?.nivel_actual || 1
+
       const { data: banco } = await supabase.from('preguntas').select('*').eq('unidad_id', unidadId).lte('dificultad', Math.min(nivel + 1, 3))
+
       if (banco && banco.length > 0) {
-        // Asegurar variedad de tipos: tomar al menos 1 de cada tipo disponible
         const porTipo: Record<string, typeof banco> = {}
         banco.forEach(p => {
           if (!porTipo[p.tipo]) porTipo[p.tipo] = []
           porTipo[p.tipo].push(p)
         })
         let seleccionadas: typeof banco = []
-        // Primero tomar 1 de cada tipo
         Object.values(porTipo).forEach(grupo => {
           const rand = grupo[Math.floor(Math.random() * grupo.length)]
           seleccionadas.push(rand)
         })
-        // Completar hasta 7 con el resto mezclado
         const restantes = banco.filter(p => !seleccionadas.find(s => s.id === p.id)).sort(() => Math.random() - 0.5)
         seleccionadas = [...seleccionadas, ...restantes].slice(0, 7).sort(() => Math.random() - 0.5)
 
-        // Mezclar opciones para preguntas de opción múltiple, completar y V/F
         const procesadas = seleccionadas.map(p => {
           const opciones = typeof p.opciones === 'string' ? JSON.parse(p.opciones) : p.opciones
           if (['multiple', 'completar', 'verdadero_falso'].includes(p.tipo) && Array.isArray(opciones)) {
@@ -177,6 +176,11 @@ export default function LeccionPage() {
       completada: aprobado, nivel_actual: aprobado ? (puntaje >= 80 ? 2 : 1) : 1,
       sesiones: 1, ultimo_puntaje: puntaje, updated_at: new Date().toISOString(),
     }, { onConflict: 'user_id,unidad_id' })
+
+    // Actualizar racha al completar una unidad
+    if (aprobado) {
+      await supabase.rpc('actualizar_racha', { p_user_id: userId })
+    }
   }
 
   const handleSiguiente = async () => {
@@ -230,14 +234,36 @@ export default function LeccionPage() {
   return (
     <>
       <style>{`
-        .lec-wrap { min-height: 100vh; background: #FFF8E8; display: flex; flex-direction: column; }
-        .lec-header { background: #FFFDF5; border-bottom: 1px solid #E8D9B8; padding: 12px 20px; display: flex; align-items: center; gap: 12px; position: sticky; top: 68px; z-index: 10; }
+        /* Wrapper ocupa toda la pantalla después del navbar */
+        .lec-wrap {
+          position: fixed;
+          top: 68px;
+          left: 0; right: 0; bottom: 0;
+          background: #FFF8E8;
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+        }
+        /* Header pegado arriba dentro del wrapper */
+        .lec-header {
+          background: #FFFDF5;
+          border-bottom: 1px solid #E8D9B8;
+          padding: 12px 20px;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          flex-shrink: 0;
+        }
         .lec-titulo { font-family: 'Fredoka',sans-serif; font-size: 14px; font-weight: 600; color: #3D2A0E; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; flex-shrink: 0; }
         .prog-wrap { flex: 1; height: 10px; background: rgba(232,217,184,0.5); border-radius: 100px; overflow: hidden; }
         .prog-fill { height: 100%; background: #6B4520; border-radius: 100px; transition: width 0.4s ease; }
         .prog-label { font-family: 'Fredoka',sans-serif; font-size: 13px; color: #8C6D45; white-space: nowrap; flex-shrink: 0; }
-        /* Body con scroll propio */
-        .lec-body { flex: 1; overflow-y: auto; }
+        /* Área scrollable */
+        .lec-body {
+          flex: 1;
+          overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
+        }
         .lec-inner { max-width: 860px; margin: 0 auto; padding: 28px 24px 60px; }
         /* Layout pregunta */
         .preg-layout { display: grid; grid-template-columns: 1fr 160px; gap: 28px; align-items: start; }
@@ -258,7 +284,6 @@ export default function LeccionPage() {
         .accion-btn.on:hover { background: #3D2A0E; transform: translateY(-1px); }
         .accion-btn.off { background: #E8D9B8; color: #A87840; cursor: default; }
         .accion-btn.next { background: #6B4520; color: #FCE68B; }
-        /* Contenido */
         .contenido-wrap { max-width: 680px; }
         .contenido-badge { display: inline-block; font-family: 'Nunito',sans-serif; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; padding: 4px 12px; border-radius: 100px; margin-bottom: 14px; }
         .badge-intro { background: rgba(252,230,139,0.5); color: #6B4520; }
@@ -266,7 +291,6 @@ export default function LeccionPage() {
         .badge-consejo { background: #EAF3DE; color: #3B6D11; }
         .contenido-titulo { font-family: 'Fredoka',sans-serif; font-size: 24px; font-weight: 600; color: #3D2A0E; margin-bottom: 14px; }
         .contenido-texto { font-family: 'Nunito',sans-serif; font-size: 16px; color: #5A3E1B; line-height: 1.85; white-space: pre-line; }
-        /* Resultados */
         .result-wrap { text-align: center; padding: 24px 16px; }
         .result-stars { font-size: 44px; margin: 10px 0; }
         .result-h { font-family: 'Fredoka',sans-serif; font-size: 26px; color: #3D2A0E; margin-bottom: 8px; }
@@ -296,7 +320,6 @@ export default function LeccionPage() {
         <div className="lec-body">
           <div className="lec-inner">
 
-            {/* CONTENIDO */}
             {fase === 'contenido' && contenidoActual && (
               <div className="contenido-wrap">
                 <span className={`contenido-badge badge-${contenidoActual.tipo}`}>
@@ -318,7 +341,6 @@ export default function LeccionPage() {
               return <div style={{ padding: 40, textAlign: 'center', color: '#A87840', fontFamily: "'Fredoka',sans-serif" }}>Cargando...</div>
             })()}
 
-            {/* COMPLETADO */}
             {fase === 'completado' && (
               <div className="result-wrap">
                 <img src={MONEDOKI_POSES.super} alt="" style={{ width: 110, margin: '0 auto 8px' }} onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
@@ -337,7 +359,6 @@ export default function LeccionPage() {
               </div>
             )}
 
-            {/* REPASO */}
             {fase === 'repaso' && (
               <div className="result-wrap">
                 <img src={MONEDOKI_POSES.animo} alt="" style={{ width: 100, margin: '0 auto 8px' }} onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
@@ -354,7 +375,6 @@ export default function LeccionPage() {
               </div>
             )}
 
-            {/* PREGUNTA */}
             {(fase === 'pregunta' || fase === 'feedback') && preguntaActual && (
               <div className="preg-layout">
                 <div>
