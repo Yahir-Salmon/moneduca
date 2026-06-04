@@ -23,9 +23,18 @@ export default function PerfilPage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { router.push('/registro'); return }
       setEmail(user.email || '')
+
+      // Obtener nombre real del perfil, con fallback a metadata
       const { data: profile } = await supabase.from('profiles').select('nombre, racha').eq('id', user.id).single()
-      setNombre(profile?.nombre || user.user_metadata?.full_name || user.email?.split('@')[0] || 'Estudiante')
+      const nombreReal = profile?.nombre
+        || user.user_metadata?.nombre
+        || user.user_metadata?.full_name
+        || user.user_metadata?.name
+        || user.email?.split('@')[0]
+        || 'Estudiante'
+      setNombre(nombreReal)
       setRacha(profile?.racha || 0)
+
       const [{ data: mods }, { data: unis }, { data: prog }] = await Promise.all([
         supabase.from('modulos').select('id, nombre, icono, orden').order('orden'),
         supabase.from('unidades').select('id, modulo_id'),
@@ -67,89 +76,96 @@ export default function PerfilPage() {
     ctx.fillStyle = '#FFF8E8'
     ctx.fillRect(0, 0, 1200, 850)
 
-    // Borde decorativo
+    // Borde exterior café
     ctx.strokeStyle = '#6B4520'
     ctx.lineWidth = 12
     ctx.strokeRect(20, 20, 1160, 810)
-    ctx.strokeStyle = 'rgba(250,191,77,0.5)'
+
+    // Borde interior amarillo
+    ctx.strokeStyle = 'rgba(250,191,77,0.6)'
     ctx.lineWidth = 4
-    ctx.strokeRect(32, 32, 1136, 786)
+    ctx.strokeRect(34, 34, 1132, 782)
 
     // Esquinas decorativas
-    const corner = (x: number, y: number, r: number) => {
-      ctx.fillStyle = 'rgba(250,191,77,0.3)'
-      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill()
-    }
-    corner(60, 60, 20); corner(1140, 60, 20); corner(60, 790, 20); corner(1140, 790, 20)
+    ;[[60,60],[1140,60],[60,790],[1140,790]].forEach(([x,y]) => {
+      ctx.fillStyle = 'rgba(250,191,77,0.25)'
+      ctx.beginPath(); ctx.arc(x, y, 22, 0, Math.PI * 2); ctx.fill()
+    })
 
     // Ícono del módulo
-    ctx.font = '80px serif'
+    ctx.font = '72px serif'
     ctx.textAlign = 'center'
-    ctx.fillText(modulo.icono, 600, 140)
+    ctx.fillText(modulo.icono, 600, 135)
 
-    // Título "Certificado de logro"
-    ctx.fillStyle = '#A87840'
-    ctx.font = 'bold 28px Georgia, serif'
-    ctx.letterSpacing = '4px'
-    ctx.fillText('CERTIFICADO DE LOGRO', 600, 210)
+    // Moneduca
+    ctx.fillStyle = '#C8934A'
+    ctx.font = 'bold 18px Georgia, serif'
+    ctx.letterSpacing = '6px'
+    ctx.fillText('M O N E D U C A', 600, 180)
 
-    // Línea decorativa
-    ctx.strokeStyle = 'rgba(250,191,77,0.8)'
-    ctx.lineWidth = 2
-    ctx.beginPath(); ctx.moveTo(300, 230); ctx.lineTo(900, 230); ctx.stroke()
+    // Línea
+    ctx.strokeStyle = 'rgba(250,191,77,0.7)'
+    ctx.lineWidth = 1.5
+    ctx.beginPath(); ctx.moveTo(280, 198); ctx.lineTo(920, 198); ctx.stroke()
+
+    // Título certificado
+    ctx.fillStyle = '#8C6D45'
+    ctx.font = 'bold 26px Georgia, serif'
+    ctx.letterSpacing = '3px'
+    ctx.fillText('CERTIFICADO DE LOGRO', 600, 250)
 
     // "Se certifica que"
     ctx.fillStyle = '#8C6D45'
-    ctx.font = '22px Georgia, serif'
+    ctx.font = '20px Georgia, serif'
     ctx.letterSpacing = '0px'
-    ctx.fillText('Se certifica que', 600, 290)
+    ctx.fillText('Se certifica que', 600, 310)
 
-    // Nombre
+    // NOMBRE — usar el nombre real, no el email
     ctx.fillStyle = '#3D2A0E'
-    ctx.font = 'bold 52px Georgia, serif'
-    ctx.fillText(nombre, 600, 370)
+    ctx.font = 'bold 54px Georgia, serif'
+    ctx.fillText(nombre, 600, 390)
 
     // Línea bajo nombre
-    ctx.strokeStyle = '#6B4520'
+    const nameWidth = Math.min(ctx.measureText(nombre).width + 60, 800)
+    ctx.strokeStyle = '#C8934A'
     ctx.lineWidth = 1.5
-    const nameWidth = ctx.measureText(nombre).width
-    ctx.beginPath(); ctx.moveTo(600 - nameWidth/2 - 20, 385); ctx.lineTo(600 + nameWidth/2 + 20, 385); ctx.stroke()
+    ctx.beginPath(); ctx.moveTo(600 - nameWidth/2, 405); ctx.lineTo(600 + nameWidth/2, 405); ctx.stroke()
 
     // "completó exitosamente"
     ctx.fillStyle = '#8C6D45'
-    ctx.font = '22px Georgia, serif'
-    ctx.fillText('completó exitosamente el módulo', 600, 440)
+    ctx.font = '20px Georgia, serif'
+    ctx.fillText('completó exitosamente el módulo', 600, 460)
 
     // Nombre del módulo
     ctx.fillStyle = '#6B4520'
-    ctx.font = 'bold 34px Georgia, serif'
-    ctx.fillText(modulo.nombre, 600, 500)
+    ctx.font = 'bold 32px Georgia, serif'
+    ctx.fillText(modulo.nombre, 600, 515)
 
     // Promedio
     const promedio = getPromedioModulo(modulo.id)
     ctx.fillStyle = '#A87840'
-    ctx.font = '20px Georgia, serif'
-    ctx.fillText(`con un promedio de ${promedio}%`, 600, 550)
+    ctx.font = '18px Georgia, serif'
+    ctx.fillText(`con un promedio de ${promedio}%`, 600, 560)
 
     // Línea divisora
-    ctx.strokeStyle = 'rgba(250,191,77,0.5)'
+    ctx.strokeStyle = 'rgba(250,191,77,0.4)'
     ctx.lineWidth = 1
     ctx.beginPath(); ctx.moveTo(200, 620); ctx.lineTo(1000, 620); ctx.stroke()
 
-    // Moneduca
+    // Firma
     ctx.fillStyle = '#3D2A0E'
-    ctx.font = 'bold 32px Georgia, serif'
-    ctx.fillText('🦊 Moneduca', 600, 690)
+    ctx.font = 'bold 28px Georgia, serif'
+    ctx.fillText('🦊 Moneduca', 600, 685)
 
     ctx.fillStyle = '#A87840'
-    ctx.font = '16px Georgia, serif'
-    ctx.fillText('Educación financiera para jóvenes · moneduca.mx', 600, 720)
+    ctx.font = '15px Georgia, serif'
+    ctx.fillText('Educación financiera para jóvenes · moneduca.mx', 600, 715)
 
     // Fecha
     const fecha = new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' })
     ctx.fillStyle = '#C8934A'
-    ctx.font = '15px Georgia, serif'
-    ctx.fillText(fecha, 600, 760)
+    ctx.font = '14px Georgia, serif'
+    ctx.fillText(fecha, 600, 755)
 
     // Descargar
     const link = document.createElement('a')
@@ -169,38 +185,37 @@ export default function PerfilPage() {
     <>
       <style>{`
         .perfil-wrap { min-height: 100vh; background: #FFF8E8; padding-top: 68px; }
-        .perfil-hero { background: #3D2A0E; padding: 48px 0 40px; }
-        .perfil-hero-inner { max-width: 900px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; gap: 24px; }
-        .perfil-avatar { width: 80px; height: 80px; border-radius: 50%; background: rgba(250,191,77,0.2); border: 3px solid rgba(252,230,139,0.4); display: flex; align-items: center; justify-content: center; font-size: 36px; flex-shrink: 0; }
-        .perfil-nombre { font-family: 'Fredoka',sans-serif; font-size: 28px; color: #FCE68B; }
-        .perfil-email { font-family: 'Nunito',sans-serif; font-size: 14px; color: rgba(252,230,139,0.5); margin-top: 4px; }
-        .perfil-body { max-width: 900px; margin: 0 auto; padding: 40px 24px; display: flex; flex-direction: column; gap: 32px; }
-        /* Stats */
+        .perfil-hero { background: #3D2A0E; padding: 44px 0 36px; }
+        .perfil-hero-inner { max-width: 900px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; gap: 20px; }
+        .perfil-avatar { width: 76px; height: 76px; border-radius: 50%; background: rgba(250,191,77,0.15); border: 3px solid rgba(252,230,139,0.3); display: flex; align-items: center; justify-content: center; font-size: 34px; flex-shrink: 0; }
+        .perfil-nombre { font-family: 'Fredoka',sans-serif; font-size: 26px; color: #FCE68B; }
+        .perfil-email { font-family: 'Nunito',sans-serif; font-size: 13px; color: rgba(252,230,139,0.45); margin-top: 3px; }
+        .perfil-back { margin-left: auto; padding: 8px 18px; border-radius: 100px; border: 1.5px solid rgba(252,230,139,0.3); background: transparent; color: rgba(252,230,139,0.7); font-family: 'Fredoka',sans-serif; font-size: 14px; cursor: pointer; transition: all 0.2s; }
+        .perfil-back:hover { border-color: rgba(252,230,139,0.7); color: #FCE68B; }
+        .perfil-body { max-width: 900px; margin: 0 auto; padding: 36px 24px; display: flex; flex-direction: column; gap: 32px; }
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-        .stat-card { background: #FFFDF5; border-radius: 20px; border: 1px solid #E8D9B8; padding: 24px; text-align: center; }
-        .stat-num { font-family: 'Fredoka',sans-serif; font-size: 40px; color: #6B4520; line-height: 1; margin-bottom: 8px; }
-        .stat-lbl { font-family: 'Nunito',sans-serif; font-size: 14px; color: #8C6D45; }
-        /* Logros */
+        .stat-card { background: #FFFDF5; border-radius: 20px; border: 1px solid #E8D9B8; padding: 22px; text-align: center; }
+        .stat-num { font-family: 'Fredoka',sans-serif; font-size: 38px; color: #6B4520; line-height: 1; margin-bottom: 8px; }
+        .stat-lbl { font-family: 'Nunito',sans-serif; font-size: 13px; color: #8C6D45; }
         .seccion-titulo { font-family: 'Fredoka',sans-serif; font-size: 20px; color: #3D2A0E; margin-bottom: 16px; }
-        .logros-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-        .logro-card { background: #FFFDF5; border-radius: 16px; border: 1px solid #E8D9B8; padding: 20px; text-align: center; }
-        .logro-card.obtenido { border-color: rgba(250,191,77,0.6); background: rgba(252,230,139,0.1); }
+        .logros-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .logro-card { background: #FFFDF5; border-radius: 16px; border: 1px solid #E8D9B8; padding: 18px; text-align: center; }
+        .logro-card.obtenido { border-color: rgba(250,191,77,0.6); background: rgba(252,230,139,0.08); }
         .logro-card.bloqueado { opacity: 0.4; }
-        .logro-icon { font-size: 36px; margin-bottom: 10px; }
-        .logro-nombre { font-family: 'Fredoka',sans-serif; font-size: 15px; color: #3D2A0E; margin-bottom: 4px; }
-        .logro-desc { font-family: 'Nunito',sans-serif; font-size: 12px; color: #8C6D45; }
-        /* Certificados */
-        .certs-grid { display: flex; flex-direction: column; gap: 12px; }
-        .cert-card { background: #FFFDF5; border-radius: 16px; border: 1px solid #E8D9B8; padding: 20px 24px; display: flex; align-items: center; gap: 16px; }
-        .cert-card.completado { border-color: rgba(250,191,77,0.5); background: rgba(252,230,139,0.08); }
-        .cert-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; }
-        .cert-nombre { font-family: 'Fredoka',sans-serif; font-size: 16px; color: #3D2A0E; }
-        .cert-estado { font-family: 'Nunito',sans-serif; font-size: 13px; color: #A87840; margin-top: 3px; }
-        .cert-btn { margin-left: auto; padding: 10px 20px; border-radius: 100px; border: none; font-family: 'Fredoka',sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+        .logro-icon { font-size: 34px; margin-bottom: 8px; }
+        .logro-nombre { font-family: 'Fredoka',sans-serif; font-size: 14px; color: #3D2A0E; margin-bottom: 3px; }
+        .logro-desc { font-family: 'Nunito',sans-serif; font-size: 11px; color: #8C6D45; }
+        .certs-grid { display: flex; flex-direction: column; gap: 10px; }
+        .cert-card { background: #FFFDF5; border-radius: 16px; border: 1px solid #E8D9B8; padding: 18px 22px; display: flex; align-items: center; gap: 14px; }
+        .cert-card.completado { border-color: rgba(250,191,77,0.5); background: rgba(252,230,139,0.06); }
+        .cert-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+        .cert-nombre { font-family: 'Fredoka',sans-serif; font-size: 15px; color: #3D2A0E; }
+        .cert-estado { font-family: 'Nunito',sans-serif; font-size: 12px; color: #A87840; margin-top: 2px; }
+        .cert-btn { margin-left: auto; padding: 9px 18px; border-radius: 100px; border: none; font-family: 'Fredoka',sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
         .cert-btn.activo { background: #6B4520; color: #FCE68B; }
         .cert-btn.activo:hover { background: #3D2A0E; transform: translateY(-1px); }
         .cert-btn.inactivo { background: #E8D9B8; color: #A87840; cursor: not-allowed; }
-        @media (max-width: 600px) { .stats-grid, .logros-grid { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 600px) { .stats-grid { grid-template-columns: 1fr 1fr; } .logros-grid { grid-template-columns: 1fr 1fr; } }
       `}</style>
 
       <canvas ref={canvasRef} style={{ display: 'none' }} />
@@ -213,11 +228,11 @@ export default function PerfilPage() {
               <div className="perfil-nombre">{nombre}</div>
               <div className="perfil-email">{email}</div>
             </div>
+            <button className="perfil-back" onClick={() => router.push('/dashboard')}>← Volver</button>
           </div>
         </div>
 
         <div className="perfil-body">
-          {/* Stats */}
           <div className="stats-grid">
             <div className="stat-card">
               <div className="stat-num">🔥 {racha}</div>
@@ -233,7 +248,6 @@ export default function PerfilPage() {
             </div>
           </div>
 
-          {/* Logros */}
           <div>
             <h2 className="seccion-titulo">🏅 Logros</h2>
             <div className="logros-grid">
@@ -254,11 +268,10 @@ export default function PerfilPage() {
             </div>
           </div>
 
-          {/* Certificados */}
           <div>
             <h2 className="seccion-titulo">📜 Certificados</h2>
             <p style={{ fontFamily: "'Nunito',sans-serif", fontSize: 14, color: '#8C6D45', marginBottom: 16 }}>
-              Completa todos los módulos para descargar tu certificado de cada uno.
+              Completa todos las unidades de un módulo para descargar su certificado.
             </p>
             <div className="certs-grid">
               {modulos.map(modulo => {
