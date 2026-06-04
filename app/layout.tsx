@@ -7,10 +7,19 @@ export const metadata: Metadata = {
   title: 'Moneduca — Finanzas para jóvenes',
   description:
     'Aprende a manejar tu dinero de forma divertida e inteligente. Cursos de finanzas personales diseñados para jóvenes de secundaria.',
-  icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.ico',
-  },
+icons: {
+  icon: '/favicon.ico',
+  shortcut: '/favicon.ico',
+  apple: '/favicon.ico',
+},
+openGraph: {
+  title: 'Moneduca — Finanzas para jóvenes',
+  description: 'Aprende a manejar tu dinero de forma divertida e inteligente.',
+  url: 'https://www.moneduca.mx',
+  siteName: 'Moneduca',
+  images: [{ url: 'https://www.moneduca.mx/monedoki.png', width: 400, height: 400 }],
+  type: 'website',
+},
   verification: {
     google: 'opKmUQFTcZgh9jGOWGulYZDJ8AgQcDHcx32uupzAyc4',
   },
