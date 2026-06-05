@@ -10,52 +10,76 @@ export default function Footer() {
           display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px;
           padding-bottom: 48px; border-bottom: 1px solid rgba(200,147,74,0.2);
         }
-        .footer-logo { font-family: 'Fredoka',sans-serif; font-size: 22px; font-weight: 700; color: rgba(252,230,139,1); display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
-        .footer-logo-box { width: 34px; height: 34px; background: rgba(250,191,77,1); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-        .footer-desc { font-size: 14px; line-height: 1.7; max-width: 280px; color: #A87840; }
-        .footer-col-title { font-family: 'Nunito',sans-serif; font-size: 12px; font-weight: 800; color: rgba(252,230,139,0.8); letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 18px; }
-        .footer-link { display: block; color: #A87840; font-size: 14px; margin-bottom: 10px; transition: color 0.2s; font-family: 'Nunito',sans-serif; }
+        .footer-logo {
+          font-family: 'Fredoka',sans-serif; font-size: 22px; font-weight: 700;
+          color: rgba(252,230,139,1); display: flex; align-items: center;
+          gap: 10px; margin-bottom: 14px; text-decoration: none;
+        }
+        .footer-logo-box {
+          width: 34px; height: 34px; background: rgba(250,191,77,1);
+          border-radius: 9px; display: flex; align-items: center; justify-content: center;
+        }
+        .footer-logo-m { font-family: 'Fredoka',sans-serif; font-size: 18px; font-weight: 700; color: #3D2A0E; line-height: 1; }
+        .footer-desc { font-size: 14px; line-height: 1.7; max-width: 280px; color: #A87840; font-family: 'Nunito',sans-serif; }
+        .footer-col-title {
+          font-family: 'Nunito',sans-serif; font-size: 12px; font-weight: 800;
+          color: rgba(252,230,139,0.7); letter-spacing: 0.07em; text-transform: uppercase;
+          margin-bottom: 18px;
+        }
+        .footer-link {
+          display: block; color: #A87840; font-size: 14px; margin-bottom: 10px;
+          transition: color 0.15s; font-family: 'Nunito',sans-serif; text-decoration: none;
+        }
         .footer-link:hover { color: rgba(252,230,139,1); }
-        .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 32px; font-size: 13px; font-family: 'Nunito',sans-serif; }
-        .footer-mascot { font-size: 28px; }
+        .footer-bottom {
+          display: flex; justify-content: space-between; align-items: center;
+          padding-top: 32px; font-size: 13px; font-family: 'Nunito',sans-serif;
+        }
         @media (max-width: 768px) {
           .footer-top { grid-template-columns: 1fr 1fr; gap: 32px; }
           .footer-bottom { flex-direction: column; gap: 10px; text-align: center; }
+        }
+        @media (max-width: 480px) {
+          .footer-top { grid-template-columns: 1fr; }
         }
       `}</style>
       <footer className="footer">
         <div className="footer-inner">
           <div className="footer-top">
             <div>
-              <div className="footer-logo">
-                <div className="footer-logo-box">🦊</div>
+              <Link href="/" className="footer-logo">
+                <div className="footer-logo-box">
+                  <span className="footer-logo-m">M</span>
+                </div>
                 Moneduca
-              </div>
-              <p className="footer-desc">Educación financiera divertida y accesible para jóvenes de secundaria. Aprende a manejar tu dinero desde hoy.</p>
+              </Link>
+              <p className="footer-desc">
+                Educación financiera accesible para jóvenes de secundaria.
+                Aprende a manejar tu dinero desde hoy.
+              </p>
             </div>
             <div>
               <p className="footer-col-title">Aprende</p>
-              <Link href="/cursos" className="footer-link">Todos los cursos</Link>
-              <Link href="/cursos#ahorro" className="footer-link">Ahorro</Link>
-              <Link href="/cursos#presupuesto" className="footer-link">Presupuesto</Link>
-              <Link href="/cursos#inversion" className="footer-link">Inversión</Link>
+              <Link href="/cursos"             className="footer-link">Todos los módulos</Link>
+              <Link href="/biblioteca"          className="footer-link">Biblioteca</Link>
+              <Link href="/cursos#presupuesto"  className="footer-link">Presupuesto</Link>
+              <Link href="/cursos#inversion"    className="footer-link">Inversión</Link>
             </div>
             <div>
               <p className="footer-col-title">Nosotros</p>
               <Link href="/quienes-somos" className="footer-link">Quiénes somos</Link>
-              <Link href="/contacto" className="footer-link">Contacto</Link>
-              <Link href="/registro" className="footer-link">Crear cuenta</Link>
+              <Link href="/contacto"      className="footer-link">Contacto</Link>
+              <Link href="/registro"      className="footer-link">Crear cuenta</Link>
             </div>
             <div>
               <p className="footer-col-title">Legal</p>
-              <Link href="#" className="footer-link">Privacidad</Link>
-              <Link href="#" className="footer-link">Términos</Link>
+              <Link href="/privacidad" className="footer-link">Privacidad</Link>
+              <Link href="/terminos"   className="footer-link">Términos de uso</Link>
             </div>
           </div>
           <div className="footer-bottom">
             <p>© 2026 <span style={{ color: 'rgba(252,230,139,1)' }}>Moneduca</span>. Todos los derechos reservados.</p>
-            <span className="footer-mascot">🦊</span>
-            <p style={{ color: '#A87840' }}>Hecho con ❤️ para jóvenes mexicanos</p>
+            <p style={{ color: '#A87840' }}>Educación financiera para jóvenes mexicanos.</p>
           </div>
         </div>
       </footer>
