@@ -6,12 +6,12 @@ import Chatbot from '@/components/Chatbot'
 import { supabase } from '@/lib/supabase'
 
 const modulos = [
-  { emoji: '💰', color: 'rgba(252,230,139,0.5)', accent: '#C8934A', titulo: 'Bases: Historia del dinero', desc: 'Descubre cómo nació el dinero, por qué existe y cómo ha cambiado el mundo.', nivel: 'Básico' },
-  { emoji: '📊', color: 'rgba(250,191,77,0.25)', accent: '#6B4520', titulo: 'Presupuesto y ahorro', desc: 'Aprende a organizar tu dinero y crear el hábito del ahorro desde hoy.', nivel: 'Básico' },
-  { emoji: '📈', color: 'rgba(145,99,47,0.1)', accent: '#8C6D45', titulo: 'Inversiones', desc: 'Haz que tu dinero trabaje para ti. CETES, interés compuesto y más.', nivel: 'Intermedio' },
-  { emoji: '💳', color: 'rgba(252,230,139,0.4)', accent: '#C8934A', titulo: 'Tarjetas de crédito y débito', desc: 'Usa el plástico a tu favor sin caer en deudas ni intereses.', nivel: 'Intermedio' },
-  { emoji: '🧾', color: 'rgba(145,99,47,0.15)', accent: '#6B4520', titulo: 'Impuestos', desc: 'Entiende qué son, para qué sirven y cómo funcionan en México.', nivel: 'Avanzado' },
-  { emoji: '🛡️', color: 'rgba(252,230,139,0.3)', accent: '#C8934A', titulo: 'Estafas y seguros', desc: 'Protégete de fraudes financieros y aprende qué es un seguro.', nivel: 'Avanzado' },
+  { emoji: '01', color: 'rgba(252,230,139,0.5)', accent: '#C8934A', titulo: 'Bases: Historia del dinero', desc: 'Descubre cómo nació el dinero, por qué existe y cómo ha cambiado el mundo.', nivel: 'Básico' },
+  { emoji: '02', color: 'rgba(250,191,77,0.25)', accent: '#6B4520', titulo: 'Presupuesto y ahorro', desc: 'Aprende a organizar tu dinero y crear el hábito del ahorro desde hoy.', nivel: 'Básico' },
+  { emoji: '03', color: 'rgba(145,99,47,0.1)', accent: '#8C6D45', titulo: 'Inversiones', desc: 'Haz que tu dinero trabaje para ti. CETES, interés compuesto y más.', nivel: 'Intermedio' },
+  { emoji: '04', color: 'rgba(252,230,139,0.4)', accent: '#C8934A', titulo: 'Tarjetas de crédito y débito', desc: 'Usa el plástico a tu favor sin caer en deudas ni intereses.', nivel: 'Intermedio' },
+  { emoji: '05', color: 'rgba(145,99,47,0.15)', accent: '#6B4520', titulo: 'Impuestos', desc: 'Entiende qué son, para qué sirven y cómo funcionan en México.', nivel: 'Avanzado' },
+  { emoji: '06', color: 'rgba(252,230,139,0.3)', accent: '#C8934A', titulo: 'Estafas y seguros', desc: 'Protégete de fraudes financieros y aprende qué es un seguro.', nivel: 'Avanzado' },
 ]
 
 const pasos = [
@@ -123,7 +123,7 @@ export default function HomePage() {
             </h1>
             <p className="hero-desc">Moneduca te enseña todo lo que la escuela no te dijo sobre el dinero. 6 módulos, lecciones interactivas y Monedoki como tu guía.</p>
             <div className="hero-btns">
-              <button onClick={handleCTA} className="btn btn-primary" style={{ fontSize: 16, padding: '16px 32px' }}>Empezar gratis ✦</button>
+              <button onClick={handleCTA} className="btn btn-primary" style={{ fontSize: 16, padding: '16px 32px' }}>Empezar gratis</button>
               <Link href="/cursos" className="btn btn-secondary" style={{ fontSize: 16, padding: '16px 32px' }}>Ver módulos</Link>
             </div>
             <div className="hero-stats">
@@ -133,7 +133,7 @@ export default function HomePage() {
             </div>
           </div>
           <div className="hero-right">
-            <div className="mk-bubble">¡Hola! Soy Monedoki 🦊<br/>¡Te enseño a manejar tu lana!</div>
+            <div className="mk-bubble">Hola, soy Monedoki.<br/>Aprende a manejar tu dinero.</div>
             <img src="/monedoki.png" alt="Monedoki" className="mk-hero-img" onError={e => { (e.target as HTMLImageElement).style.display='none' }} />
             <div className="hero-card">
               <p className="card-label">Tu progreso esta semana</p>
@@ -184,7 +184,7 @@ export default function HomePage() {
             <p style={{ fontSize: 15, color: '#8C6D45', marginBottom: 24, fontFamily: "'Nunito',sans-serif", lineHeight: 1.7 }}>
               Aprende con preguntas interactivas, feedback inmediato y la compañía de Monedoki. Te celebra cuando aciertas y te anima cuando te equivocas.
             </p>
-            <button onClick={handleCTA} className="btn btn-primary">Conocer a Monedoki ✦</button>
+            <button onClick={handleCTA} className="btn btn-primary">Conocer a Monedoki</button>
           </div>
           <img src="/monedoki.png" alt="Monedoki" className="mk-cta-img" onError={e => { (e.target as HTMLImageElement).style.display='none' }} />
         </div>
@@ -231,7 +231,7 @@ export default function HomePage() {
         <div className="cta-box">
           <h2 className="cta-h2">¿Listo para <span>dominar</span> tu dinero?</h2>
           <p className="cta-desc">Únete gratis hoy. Sin tarjeta, sin compromisos.</p>
-          <button onClick={handleCTA} className="btn btn-yellow" style={{ fontSize: 17, padding: '18px 40px', position: 'relative', zIndex: 1 }}>Crear mi cuenta gratis ✦</button>
+          <button onClick={handleCTA} className="btn btn-yellow" style={{ fontSize: 17, padding: '18px 40px', position: 'relative', zIndex: 1 }}>Crear mi cuenta gratis</button>
         </div>
       </div>
     </>
