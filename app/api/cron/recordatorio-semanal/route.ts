@@ -7,8 +7,12 @@ import { createClient } from '@supabase/supabase-js'
 export async function POST(req: NextRequest) {
   // Verificar autorización
   const authHeader = req.headers.get('authorization')
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+  const secret = process.env.CRON_SECRET
+  console.log('AUTH HEADER:', authHeader)
+  console.log('CRON_SECRET defined:', !!secret)
+  console.log('CRON_SECRET first8:', secret?.slice(0, 8))
+  if (authHeader !== `Bearer ${secret}`) {
+    return NextResponse.json({ error: 'No autorizado', debug: { headerReceived: authHeader?.slice(0, 20), secretDefined: !!secret } }, { status: 401 })
   }
 
   // Cliente con service role para leer datos de usuarios
