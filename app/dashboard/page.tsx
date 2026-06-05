@@ -69,7 +69,7 @@ export default function DashboardPage() {
   if (loading) return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#FFF8E8', gap: 16 }}>
       <img src="/monedoki-neutral.png" alt="" style={{ width: 80 }} onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
-      <p style={{ fontFamily: "'Fredoka',sans-serif", fontSize: 20, color: '#6B4520' }}>Cargando... 🦊</p>
+      <p style={{ fontFamily: "'Fredoka',sans-serif", fontSize: 20, color: '#6B4520' }}>Cargando...</p>
     </div>
   )
 
@@ -157,9 +157,10 @@ export default function DashboardPage() {
           <div className="dash-top-inner">
             <div className="dash-welcome">¡Hola, <span>{nombre}</span>! 👋</div>
             <div className="dash-stats-row">
-              {racha > 0 && <div className="dash-stat-pill">🔥 {racha} días</div>}
-              <div className="dash-stat-pill">⭐ {totalCompletadas}/{totalUnidades}</div>
-              <Link href="/perfil" className="profile-link">👤 Mi perfil</Link>
+              {racha > 0 && <div className="dash-stat-pill">{racha} días</div>}
+              <div className="dash-stat-pill">{totalCompletadas}/{totalUnidades}</div>
+              <Link href="/biblioteca" className="profile-link" style={{background:'rgba(232,217,184,0.5)',color:'#6B4520'}}>Biblioteca</Link>
+              <Link href="/perfil" className="profile-link">Mi perfil</Link>
             </div>
           </div>
         </div>
@@ -169,8 +170,8 @@ export default function DashboardPage() {
           <div className="mk-motivacion">
             <img src="/monedoki-neutral.png" alt="" style={{ width: 48, flexShrink: 0 }} onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
             <div className="mk-mot-msg">
-              <strong>{totalCompletadas === 0 ? '¡Empieza tu aventura!' : totalCompletadas === totalUnidades ? '¡Lo lograste todo! 🏆' : '¡Sigue el camino!'}</strong>
-              {totalCompletadas === 0 ? 'Tu primera lección te espera. ¡Dale clic al primer círculo!' : totalCompletadas === totalUnidades ? 'Completaste todos los módulos. ¡Eres un experto financiero!' : `Llevas ${totalCompletadas} unidades. ¡${totalUnidades - totalCompletadas} más para terminar!`}
+              <strong>{totalCompletadas === 0 ? "Bienvenido" : totalCompletadas === totalUnidades ? "Todo completado" : "Continúa aprendiendo"}</strong>
+              {totalCompletadas === 0 ? 'Tu primera lección te espera.' : totalCompletadas === totalUnidades ? 'Completaste todos los módulos. Dominas todos los módulos.' : `Llevas ${totalCompletadas} unidades completadas de ${totalUnidades}.`}
             </div>
           </div>
 
@@ -190,7 +191,7 @@ export default function DashboardPage() {
                     <div className="modulo-banner-nombre" style={{ color: color.accent }}>Módulo {mi + 1}: {modulo.nombre}</div>
                     <div className="modulo-banner-info" style={{ color: color.accent }}>{completadasModulo}/{unidadesModulo.length} unidades</div>
                   </div>
-                  {completado && <div className="modulo-completo-badge">🏆</div>}
+                  {completado && <div className="modulo-completo-badge"></div>}
                 </div>
 
                 {/* Unidades como nodos */}
@@ -209,7 +210,7 @@ export default function DashboardPage() {
                             className={`nodo-circulo ${completada ? 'completado' : esActiva ? 'activo' : 'bloqueado'}`}
                             onClick={() => desbloqueada && router.push(`/aprender/${modulo.id}/${unidad.id}`)}
                           >
-                            {completada ? <span className="nodo-check">✓</span> : !desbloqueada ? <span className="nodo-lock">🔒</span> : <span className="nodo-num">{unidad.orden}</span>}
+                            {completada ? <span className="nodo-check">✓</span> : !desbloqueada ? <span className="nodo-lock">–</span> : <span className="nodo-num">{unidad.orden}</span>}
                           </div>
                           <div className="unidad-info">
                             <div className="unidad-nombre-nodo">{unidad.nombre}</div>
@@ -236,12 +237,12 @@ export default function DashboardPage() {
                   onClick={() => completado && router.push(`/aprender/${modulo.id}/prueba`)}
                   style={{ cursor: completado ? 'pointer' : 'not-allowed' }}
                 >
-                  <div className="prueba-icon">{completado ? '🏆' : '🔒'}</div>
+                  <div className="prueba-icon">{completado ? '' : '–'}</div>
                   <div>
                     <div className="prueba-titulo">Prueba del módulo</div>
                     <div className="prueba-desc">{completado ? 'Demuestra que dominaste todo el módulo' : 'Completa todas las unidades para desbloquear'}</div>
                   </div>
-                  <div className="prueba-arrow">{completado ? '→' : '🔒'}</div>
+                  <div className="prueba-arrow">{completado ? '→' : '–'}</div>
                 </div>
               </div>
             )
