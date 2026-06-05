@@ -218,7 +218,7 @@ export default function LeccionPage() {
   if (loading) return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#FFF8E8', gap: 16 }}>
       <img src={MONEDOKI_POSES.neutral} alt="" style={{ width: 90 }} onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
-      <p style={{ fontFamily: "'Fredoka',sans-serif", fontSize: 20, color: '#6B4520' }}>Preparando tu lección... 🦊</p>
+      <p style={{ fontFamily: "'Fredoka',sans-serif", fontSize: 20, color: '#6B4520' }}>Preparando tu lección...</p>
     </div>
   )
 
@@ -344,16 +344,16 @@ export default function LeccionPage() {
             {fase === 'completado' && (
               <div className="result-wrap">
                 <img src={MONEDOKI_POSES.super} alt="" style={{ width: 110, margin: '0 auto 8px' }} onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
-                <div className="result-stars">⭐⭐⭐</div>
-                <h2 className="result-h">¡Unidad completada!</h2>
-                <p className="result-sub">¡Monedoki está muy orgulloso! Dominaste <strong>{unidadNombre}</strong>.</p>
+                <div className="result-stars"></div>
+                <h2 className="result-h">Unidad completada</h2>
+                <p className="result-sub">Completaste <strong>{unidadNombre}</strong>.</p>
                 <div className="stats-row">
                   <div className="stat-b"><div className="stat-n">{correctas}</div><div className="stat-l">correctas</div></div>
                   <div className="stat-b"><div className="stat-n">{errores}</div><div className="stat-l">errores</div></div>
                   <div className="stat-b"><div className="stat-n">{Math.round((correctas / preguntas.length) * 100)}%</div><div className="stat-l">puntaje</div></div>
                 </div>
                 <div className="btns-col">
-                  <button className="accion-btn on" onClick={() => router.push('/dashboard')}>Ir al inicio 🏠</button>
+                  <button className="accion-btn on" onClick={() => router.push('/dashboard')}>Volver al inicio</button>
                   <button className="sec-btn" onClick={handleReintentar}>Practicar de nuevo</button>
                 </div>
               </div>
@@ -369,7 +369,7 @@ export default function LeccionPage() {
                   <div className="stat-b"><div className="stat-n">{errores}</div><div className="stat-l">errores</div></div>
                 </div>
                 <div className="btns-col">
-                  <button className="accion-btn on" onClick={handleReintentar}>Intentar de nuevo 💪</button>
+                  <button className="accion-btn on" onClick={handleReintentar}>Intentar de nuevo</button>
                   <button className="sec-btn" onClick={() => router.push('/dashboard')}>Volver al inicio</button>
                 </div>
               </div>
@@ -398,13 +398,13 @@ export default function LeccionPage() {
                       </div>
                       {fase === 'feedback' && (
                         <div className={`feedback ${esCorrecta ? 'fb-ok' : 'fb-mal'}`}>
-                          <strong>{esCorrecta ? '✅ ¡Correcto!' : '❌ Respuesta incorrecta'}</strong>
+                          <strong>{esCorrecta ? 'Correcto.' : 'Incorrecto.'}</strong>
                           <br />{preguntaActual.explicacion}
                         </div>
                       )}
                       {fase === 'pregunta'
                         ? <button className={`accion-btn ${seleccionada ? 'on' : 'off'}`} onClick={handleConfirmarMultiple} disabled={!seleccionada}>Confirmar respuesta</button>
-                        : <button className="accion-btn next" onClick={handleSiguiente}>{indice + 1 >= preguntas.length ? 'Ver resultados →' : 'Siguiente →'}</button>
+                        : <button className="accion-btn next" onClick={handleSiguiente}>{indice + 1 >= preguntas.length ? 'Ver resultados' : 'Siguiente'}</button>
                       }
                     </>
                   )}
@@ -415,10 +415,10 @@ export default function LeccionPage() {
                   {preguntaActual.tipo === 'ordenar' && fase === 'feedback' && (
                     <>
                       <div className={`feedback ${esCorrecta ? 'fb-ok' : 'fb-mal'}`}>
-                        <strong>{esCorrecta ? '✅ ¡Orden correcto!' : '❌ El orden no era el correcto'}</strong>
+                        <strong>{esCorrecta ? 'Correcto.' : 'Incorrecto.'}</strong>
                         <br />{preguntaActual.explicacion}
                       </div>
-                      <button className="accion-btn next" onClick={handleSiguiente}>{indice + 1 >= preguntas.length ? 'Ver resultados →' : 'Siguiente →'}</button>
+                      <button className="accion-btn next" onClick={handleSiguiente}>{indice + 1 >= preguntas.length ? 'Ver resultados' : 'Siguiente'}</button>
                     </>
                   )}
 
@@ -428,10 +428,10 @@ export default function LeccionPage() {
                   {preguntaActual.tipo === 'drag_and_drop' && fase === 'feedback' && (
                     <>
                       <div className={`feedback ${esCorrecta ? 'fb-ok' : 'fb-mal'}`}>
-                        <strong>{esCorrecta ? '✅ ¡Perfecto!' : '❌ Algunas no estaban correctas'}</strong>
+                        <strong>{esCorrecta ? 'Correcto.' : 'Incorrecto.'}</strong>
                         <br />{preguntaActual.explicacion}
                       </div>
-                      <button className="accion-btn next" onClick={handleSiguiente}>{indice + 1 >= preguntas.length ? 'Ver resultados →' : 'Siguiente →'}</button>
+                      <button className="accion-btn next" onClick={handleSiguiente}>{indice + 1 >= preguntas.length ? 'Ver resultados' : 'Siguiente'}</button>
                     </>
                   )}
                 </div>
