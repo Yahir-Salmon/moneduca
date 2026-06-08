@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import DarkModeToggle from './DarkModeToggle'
 
 const links = [
   { href: '/cursos',        label: 'Cursos'    },
@@ -160,6 +161,7 @@ export default function Navbar() {
             )}
           </div>
 
+          <DarkModeToggle />
           <button className="hamburger" onClick={() => setOpen(!open)} aria-label="Menú">
             <span className="ham-line" />
             <span className="ham-line" />
