@@ -70,3 +70,63 @@ img { max-width: 100%; display: block; }
 
 .section { padding: 96px 0; }
 @media (max-width: 768px) { .section { padding: 64px 0; } }
+
+/* ===== DARK MODE ===== */
+html.dark {
+  --m-yellow:       rgba(252, 230, 139, 1);
+  --m-yellow-deep:  rgba(250, 191, 77, 1);
+  --m-brown:        #C8934A;
+  --m-brown-mid:    #A87840;
+  --m-brown-dark:   #FCE68B;
+  --m-brown-darker: #FFF3C4;
+  --m-cream:        #1A1208;
+  --m-cream-light:  #211608;
+  --m-muted:        #A87840;
+  --m-border:       #3D2A0E;
+}
+
+html.dark body {
+  background: #1A1208;
+  color: #FFF3C4;
+}
+
+html.dark h1,
+html.dark h2,
+html.dark h3,
+html.dark h4,
+html.dark h5,
+html.dark h6 {
+  color: #FFF3C4;
+}
+
+/* Navbar dark */
+html.dark .nav {
+  background: rgba(26,18,8,0.96);
+  border-bottom-color: #3D2A0E;
+}
+html.dark .nav-logo { color: #FFF3C4; }
+html.dark .nav-link { color: #A87840; }
+html.dark .nav-link:hover,
+html.dark .nav-link.active { color: #FCE68B; background: rgba(252,230,139,0.1); }
+html.dark .nav-user-name { color: #FCE68B; background: rgba(252,230,139,0.1); }
+html.dark .nav-logout { border-color: #3D2A0E; color: #A87840; }
+html.dark .mobile-menu { background: #211608; border-bottom-color: #3D2A0E; }
+html.dark .mobile-link { color: #FFF3C4; border-bottom-color: #3D2A0E; }
+
+/* Footer dark */
+html.dark .footer { background: #0D0A04; }
+
+/* Cards y superficies */
+html.dark [style*="background: #FFFDF5"],
+html.dark [style*="background:#FFFDF5"] {
+  background: #211608 !important;
+}
+html.dark [style*="background: #FFF8E8"],
+html.dark [style*="background:#FFF8E8"] {
+  background: #1A1208 !important;
+}
+html.dark [style*="border: 1px solid #E8D9B8"],
+html.dark [style*="border:1px solid #E8D9B8"],
+html.dark [style*="border-color: #E8D9B8"] {
+  border-color: #3D2A0E !important;
+}
