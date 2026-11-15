@@ -130,3 +130,143 @@ html.dark [style*="border:1px solid #E8D9B8"],
 html.dark [style*="border-color: #E8D9B8"] {
   border-color: #3D2A0E !important;
 }
+
+
+/* Selector de idioma: accesible y visible también en la navegación móvil */
+.language-switcher {
+  display: inline-flex; align-items: center; gap: 4px;
+  border: 1px solid var(--m-border); border-radius: 999px;
+  padding: 3px 5px; flex-shrink: 0; color: var(--m-muted);
+  background: var(--m-cream-light); font: 700 11px 'Nunito',sans-serif;
+}
+.language-switcher button {
+  border: 0; border-radius: 999px; background: transparent;
+  color: var(--m-muted); cursor: pointer; padding: 5px 7px;
+  font: inherit; transition: background .15s, color .15s;
+}
+.language-switcher button.selected { background: var(--m-brown-dark); color: var(--m-yellow); }
+.language-switcher button:focus-visible, button:focus-visible, a:focus-visible,
+input:focus-visible, textarea:focus-visible { outline: 3px solid #E8AD43; outline-offset: 3px; }
+@media (max-width: 768px) { .language-switcher { margin-left: auto; } }
+
+/* Contraste del tema oscuro. Gran parte del sitio contiene colores fijos en
+   estilos de página, por lo que estos selectores deben aparecer al final del CSS. */
+html.dark {
+  color-scheme: dark;
+  --m-cream: #17130F;
+  --m-cream-light: #241D17;
+  --m-brown-darker: #F8ECD8;
+  --m-brown-dark: #E2C493;
+  --m-brown-mid: #DDAF65;
+  --m-muted: #C9B49C;
+  --m-border: #514131;
+}
+html.dark body { background: #17130F; color: #F8ECD8; }
+html.dark .hero,
+html.dark .registro-wrap,
+html.dark .contacto-wrap,
+html.dark .cursos-hero,
+html.dark .bib-wrap,
+html.dark .dash-wrap,
+html.dark .perfil-wrap,
+html.dark .section,
+html.dark .chat-section { background: #17130F !important; }
+html.dark .bib-header,
+html.dark .dash-top,
+html.dark .hero-card,
+html.dark .modulo-card,
+html.dark .registro-card,
+html.dark .form-card,
+html.dark .chatbot,
+html.dark .unidad-fila,
+html.dark .unidades-grid,
+html.dark .unidad-card,
+html.dark .stat-card,
+html.dark .logro-card,
+html.dark .cert-card,
+html.dark .mision-card,
+html.dark .valor-card,
+html.dark .mk-bubble { background: #241D17 !important; border-color: #514131 !important; }
+html.dark .mk-cta,
+html.dark .cursos-cta-note,
+html.dark .chat-sugg,
+html.dark .modulo-footer,
+html.dark .mk-motivacion,
+html.dark .tag-deco { background: #35291C !important; border-color: #665038 !important; }
+html.dark .hero-h1, html.dark .hero-h1 .accent, html.dark .section-h2,
+html.dark .chat-h2, html.dark .cursos-h1, html.dark .bib-h1,
+html.dark .contacto-h1, html.dark .mision-h2, html.dark .valores-h2,
+html.dark .valor-tit, html.dark .hero-card .prog-name,
+html.dark .modulo-titulo, html.dark .modulo-nombre-bib,
+html.dark .unidad-nombre-bib, html.dark .unidad-nombre,
+html.dark .contact-label, html.dark .registro-logo,
+html.dark .bib-eyebrow, html.dark .paso-titulo, html.dark .mk-mot-msg strong,
+html.dark .unidad-nombre-nodo, html.dark .dash-welcome,
+html.dark .logro-nombre, html.dark .cert-nombre, html.dark .perfil-nombre,
+html.dark .stat-num, html.dark .paso-num, html.dark .modulo-arrow,
+html.dark .unidad-arrow { color: #F8ECD8 !important; }
+html.dark .hero-desc, html.dark .section-sub, html.dark .modulo-desc,
+html.dark .chat-desc, html.dark .chat-feat, html.dark .paso-desc,
+html.dark .cursos-desc, html.dark .unidad-desc,
+html.dark .contacto-desc, html.dark .contact-val, html.dark .bib-desc,
+html.dark .unidad-desc-bib, html.dark .unidad-desc-nodo,
+html.dark .mision-text, html.dark .valor-desc, html.dark .mk-mot-msg,
+html.dark .mk-cta p, html.dark .stat-label, html.dark .stat-lbl,
+html.dark .cert-estado, html.dark .logro-desc, html.dark .registro-sub,
+html.dark .form-label, html.dark .terms, html.dark .stat-num + div {
+  color: #D7C2AA !important;
+}
+html.dark .tag-deco,
+html.dark .modulo-nivel,
+html.dark .modulo-footer-badge,
+html.dark .cursos-cta-note,
+html.dark .stat-num + .stat-label { color: #F6D7A1 !important; }
+html.dark .form-input,
+html.dark .form-textarea,
+html.dark .chat-input,
+html.dark input,
+html.dark textarea {
+  background: #1A1511 !important;
+  color: #FFF2DB !important;
+  border-color: #756047 !important;
+}
+html.dark input::placeholder, html.dark textarea::placeholder { color: #BBA58B !important; opacity: 1; }
+html.dark .form-input:focus, html.dark .form-textarea:focus,
+html.dark .chat-input:focus, html.dark input:focus, html.dark textarea:focus {
+  border-color: #F0BE69 !important; background: #221B15 !important;
+}
+html.dark .btn-primary,
+html.dark .submit-btn,
+html.dark .profile-link,
+html.dark .btn-empezar-grande,
+html.dark .chat-send { background: #F2C978 !important; color: #26190C !important; }
+html.dark .btn-secondary, html.dark .btn-outline, html.dark .btn-repasar {
+  background: #403023 !important; color: #FBE5C3 !important;
+  border-color: #8E6D45 !important;
+}
+html.dark .btn-primary:hover, html.dark .submit-btn:hover,
+html.dark .profile-link:hover { background: #FFE2A5 !important; }
+html.dark .google-btn,
+html.dark .tab-btn.active { background: #32281E !important; color: #FFE3B6 !important; border-color: #786247 !important; }
+html.dark .tab-btn, html.dark .divider, html.dark .nav-logout,
+html.dark .nav-link, html.dark .mobile-link { color: #E2C7A5 !important; }
+html.dark .nav-link.active, html.dark .nav-link:hover { background: #403122 !important; color: #FFE2A5 !important; }
+html.dark .msg-bot, html.dark .typing-bubble, html.dark .sugg-btn {
+  background: #403123 !important; color: #F8ECD8 !important; border-color: #6D5439 !important;
+}
+html.dark .msg-user { background: #E5B96F !important; color: #241609 !important; }
+html.dark .chat-sugg, html.dark .chat-input-row { border-color: #514131 !important; }
+html.dark .unidad-nodo .nodo-circulo:not(.completado),
+html.dark .unidad-fila:hover { background: #31271E !important; }
+html.dark .nodo-num, html.dark .unidad-puntaje { color: #F1C16E !important; }
+html.dark .nodo-circulo.bloqueado { opacity: .7; }
+html.dark .qs-body { background: #17130F; }
+html.dark .qs-hero, html.dark .problema, html.dark .cta-box { background: #302218 !important; }
+html.dark .qs-desc, html.dark .prob-text { color: #E0C9AE !important; }
+html.dark .mision-text, html.dark .valor-desc { color: #D7C2AA !important; }
+html.dark .qs-h1 span, html.dark .prob-h2 span { color: #F5C878 !important; }
+html.dark .nav-user-name { color: #26190C !important; background: #F2C978 !important; }
+html.dark .language-switcher { background: #241D17; border-color: #665038; }
+html.dark .language-switcher button { color: #D7C2AA; }
+html.dark .language-switcher button.selected { background: #F2C978; color: #26190C; }
+html.dark .footer-link, html.dark .footer-desc, html.dark .footer-bottom { color: #D4B48A !important; }
