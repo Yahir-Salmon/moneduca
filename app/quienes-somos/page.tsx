@@ -13,6 +13,8 @@ export default function QuienesSomosPage() {
     <>
       <style>{`
         .qs-hero { padding: 144px 0 88px; background: #FCE9B5; text-align: center; position: relative; overflow: hidden; border-bottom: 1px solid #E8D9B8; }
+        .qs-hero-inner { max-width: 960px; margin: 0 auto; display: grid; grid-template-columns: 1fr 180px; gap: 44px; align-items: center; text-align: left; position: relative; z-index: 1; }
+        .qs-mascot { width: 180px; max-height: 220px; object-fit: contain; filter: drop-shadow(0 12px 14px rgba(83,49,17,0.13)); }
         .qs-hero::before { content: ''; position: absolute; top: -210px; left: 58%; width: 740px; height: 560px; border-radius: 50%; background: radial-gradient(circle, rgba(200,147,74,.22), transparent 68%); pointer-events: none; }
         .qs-h1 { font-size: clamp(36px,5vw,60px); font-weight: 700; color: #3D2A0E; margin-bottom: 20px; position: relative; z-index: 1; }
         .qs-h1 span { color: #8B5723; }
@@ -33,13 +35,19 @@ export default function QuienesSomosPage() {
         .prob-h2 { font-size: 32px; font-weight: 800; margin-bottom: 24px; color: #FFF3D4; }
         .prob-h2 span { color: #FCE68B; }
         .prob-text { color: #E8D4B6; font-size: 16px; line-height: 1.8; margin-bottom: 16px; }
-        @media (max-width: 768px) { .valores-grid { grid-template-columns: 1fr; } .mision-card, .problema { padding: 40px 24px; } }
+        .qs-hero .tag-deco { background: rgba(255,253,245,0.65); }
+        @media (max-width: 768px) { .qs-hero-inner { grid-template-columns: 1fr; text-align: center; } .qs-mascot { width: 125px; margin: 0 auto; } .valores-grid { grid-template-columns: 1fr; } .mision-card, .problema { padding: 40px 24px; } }
       `}</style>
       <div className="qs-hero">
         <div className="container-md">
+          <div className="qs-hero-inner">
+          <div>
           <span className="tag-deco">{t('Nuestra historia')}</span>
           <h1 className="qs-h1">{t('Nacimos para que el')} <span>{t('dinero')}</span><br />{t('deje de ser un misterio')}</h1>
           <p className="qs-desc">{t('Moneduca es una plataforma de educación financiera creada para jóvenes que quieren tomar el control de su futuro.')}</p>
+          </div>
+          <img className="qs-mascot" src="/monedoki.png" alt="Monedoki" />
+          </div>
         </div>
       </div>
       <div className="qs-body">
