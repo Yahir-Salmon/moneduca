@@ -1,11 +1,13 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
+import { useLanguage, Trans } from '@/lib/language'
 
 interface Modulo { id: string; nombre: string; descripcion: string; orden: number; icono: string }
 interface Unidad { id: string; modulo_id: string; nombre: string; orden: number; descripcion: string }
 
 export default function CursosPage() {
+  const { t } = useLanguage()
   const [modulos, setModulos] = useState<Modulo[]>([])
   const [unidades, setUnidades] = useState<Unidad[]>([])
   const [loading, setLoading] = useState(true)
@@ -33,7 +35,7 @@ export default function CursosPage() {
 
   if (loading) return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#FFF8E8' }}>
-      <p style={{ fontFamily: "'Fredoka',sans-serif", fontSize: 20, color: '#6B4520' }}>Cargando cursos... 🦊</p>
+      <p style={{ fontFamily: "'Fredoka',sans-serif", fontSize: 20, color: '#6B4520' }}>{t('Cargando cursos...')} 🦊</p>
     </div>
   )
 
@@ -65,11 +67,11 @@ export default function CursosPage() {
 
       <div className="cursos-hero">
         <div className="container-md">
-          <span className="tag-deco">Biblioteca de cursos</span>
-          <h1 className="cursos-h1">Todo lo que aprenderás<br />en Moneduca</h1>
-          <p className="cursos-desc">{modulos.length} módulos, {unidades.length} unidades de aprendizaje. Cada módulo está diseñado para jóvenes de secundaria con ejemplos de la vida real.</p>
+          <span className="tag-deco">{t('Biblioteca de cursos')}</span>
+          <h1 className="cursos-h1">{t('Todo lo que aprenderás')}<br />{t('en Moneduca')}</h1>
+          <p className="cursos-desc">{modulos.length} {t('módulos')}, {unidades.length} {t('unidades de aprendizaje. Cada módulo está diseñado para jóvenes de secundaria con ejemplos de la vida real.')}</p>
           <div className="cursos-cta-note">
-            🦊 Para acceder a las lecciones, inicia sesión y ve a <strong style={{ marginLeft: 4 }}>Mi cuenta</strong>
+            🦊 {t('Para acceder a las lecciones, inicia sesión y ve a')} <strong style={{ marginLeft: 4 }}>{t('Mi cuenta')}</strong>
           </div>
         </div>
       </div>
@@ -82,22 +84,22 @@ export default function CursosPage() {
               <div className="modulo-header-bar">
                 <div className="mod-icon">{modulo.icono}</div>
                 <div>
-                  <div className="mod-nombre">Módulo {mi + 1}: {modulo.nombre}</div>
-                  <div className="mod-desc">{modulo.descripcion}</div>
+                  <div className="mod-nombre">{t('Módulo')} {mi + 1}: <Trans text={modulo.nombre} /></div>
+                  <div className="mod-desc"><Trans text={modulo.descripcion} /></div>
                 </div>
               </div>
               <div className="unidades-grid">
                 {unidadesModulo.map(unidad => (
                   <div key={unidad.id} className="unidad-card">
-                    <div className="unidad-orden">Unidad {unidad.orden}</div>
-                    <div className="unidad-nombre">{unidad.nombre}</div>
-                    <div className="unidad-desc">{unidad.descripcion}</div>
+                    <div className="unidad-orden">{t('Unidad')} {unidad.orden}</div>
+                    <div className="unidad-nombre"><Trans text={unidad.nombre} /></div>
+                    <div className="unidad-desc"><Trans text={unidad.descripcion} /></div>
                   </div>
                 ))}
               </div>
               <div className="modulo-footer">
-                <span className="modulo-footer-info">📖 {unidadesModulo.length} unidades · Aprende a tu ritmo</span>
-                <span className="modulo-footer-badge">{mi < 2 ? 'Básico' : mi < 4 ? 'Intermedio' : 'Avanzado'}</span>
+                <span className="modulo-footer-info">📖 {unidadesModulo.length} {t('unidades · Aprende a tu ritmo')}</span>
+                <span className="modulo-footer-badge">{t(mi < 2 ? 'Básico' : mi < 4 ? 'Intermedio' : 'Avanzado')}</span>
               </div>
             </div>
           )
