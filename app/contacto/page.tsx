@@ -84,15 +84,15 @@ export default function ContactoPage() {
                 {error && <div className="form-error">{error}</div>}
                 <div className="form-group">
                   <label className="form-label">{t('Tu nombre')}</label>
-                  <input className="form-input" required placeholder="Ej. María García" value={form.nombre} onChange={e => setForm({...form, nombre: e.target.value})} minLength={2} maxLength={100} />
+                  <input className="form-input" required placeholder={language === "en" ? "e.g. Maria Garcia" : "Ej. María García"} value={form.nombre} onChange={e => setForm({...form, nombre: e.target.value})} minLength={2} maxLength={100} />
                 </div>
                 <div className="form-group">
                   <label className="form-label">{t('Tu email')}</label>
-                  <input className="form-input" type="email" required placeholder="tu@email.com" value={form.email} onChange={e => setForm({...form, email: e.target.value})} maxLength={254} />
+                  <input className="form-input" type="email" required placeholder={language === "en" ? "you@email.com" : "tu@email.com"} value={form.email} onChange={e => setForm({...form, email: e.target.value})} maxLength={254} />
                 </div>
                 <div className="form-group">
                   <label className="form-label">{t('Mensaje')}</label>
-                  <textarea className="form-textarea" required placeholder="Cuéntanos en qué podemos ayudarte..." value={form.mensaje} onChange={e => setForm({...form, mensaje: e.target.value})} minLength={10} maxLength={2000} />
+                  <textarea className="form-textarea" required placeholder={language === "en" ? "Tell us how we can help..." : "Cuéntanos en qué podemos ayudarte..."} value={form.mensaje} onChange={e => setForm({...form, mensaje: e.target.value})} minLength={10} maxLength={2000} />
                 </div>
                 <button type="submit" disabled={loading} className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', fontSize: 16, padding: 16, opacity: loading ? 0.7 : 1 }}>
                   {loading ? t('Enviando...') : t('Enviar mensaje') + ' ✦'}
