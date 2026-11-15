@@ -2,11 +2,13 @@
 import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import { useLanguage, Trans } from '@/lib/language'
 
 interface Modulo { id: string; nombre: string; icono: string; orden: number }
 interface Progreso { modulo_id: string; unidad_id: string; completada: boolean; ultimo_puntaje: number }
 
 export default function PerfilPage() {
+  const { t, language } = useLanguage()
   const [nombre, setNombre] = useState('')
   const [email, setEmail] = useState('')
   const [racha, setRacha] = useState(0)
@@ -112,13 +114,13 @@ export default function PerfilPage() {
     ctx.fillStyle = '#8C6D45'
     ctx.font = 'bold 26px Georgia, serif'
     ctx.letterSpacing = '3px'
-    ctx.fillText('CERTIFICADO DE LOGRO', 600, 250)
+    ctx.fillText(language === 'en' ? 'CERTIFICATE OF ACHIEVEMENT' : 'CERTIFICADO DE LOGRO', 600, 250)
 
     // "Se certifica que"
     ctx.fillStyle = '#8C6D45'
     ctx.font = '20px Georgia, serif'
     ctx.letterSpacing = '0px'
-    ctx.fillText('Se certifica que', 600, 310)
+    ctx.fillText(language === 'en' ? 'This certifies that' : 'Se certifica que', 600, 310)
 
     // NOMBRE — usar el nombre real, no el email
     ctx.fillStyle = '#3D2A0E'
@@ -134,7 +136,7 @@ export default function PerfilPage() {
     // "completó exitosamente"
     ctx.fillStyle = '#8C6D45'
     ctx.font = '20px Georgia, serif'
-    ctx.fillText('completó exitosamente el módulo', 600, 460)
+    ctx.fillText(language === 'en' ? 'successfully completed the module' : 'completó exitosamente el módulo', 600, 460)
 
     // Nombre del módulo
     ctx.fillStyle = '#6B4520'
@@ -145,7 +147,7 @@ export default function PerfilPage() {
     const promedio = getPromedioModulo(modulo.id)
     ctx.fillStyle = '#A87840'
     ctx.font = '18px Georgia, serif'
-    ctx.fillText(`con un promedio de ${promedio}%`, 600, 560)
+    ctx.fillText(language === 'en' ? `with an average of ${promedio}%` : `con un promedio de ${promedio}%`, 600, 560)
 
     // Línea divisora
     ctx.strokeStyle = 'rgba(250,191,77,0.4)'
@@ -177,7 +179,7 @@ export default function PerfilPage() {
 
   if (loading) return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#FFF8E8' }}>
-      <p style={{ fontFamily: "'Fredoka',sans-serif", fontSize: 20, color: '#6B4520' }}>Cargando perfil... 🦊</p>
+      <p style={{ fontFamily: "'Fredoka',sans-serif", fontSize: 20, color: '#6B4520' }}>{language === "en" ? "Loading profile..." : "Cargando perfil..."} 🦊</p>
     </div>
   )
 
@@ -228,7 +230,7 @@ export default function PerfilPage() {
               <div className="perfil-nombre">{nombre}</div>
               <div className="perfil-email">{email}</div>
             </div>
-            <button className="perfil-back" onClick={() => router.push('/dashboard')}>← Volver</button>
+            <button className="perfil-back" onClick={() => router.push('/dashboard')}>← {t("Volver")}</button>
           </div>
         </div>
 
@@ -236,20 +238,20 @@ export default function PerfilPage() {
           <div className="stats-grid">
             <div className="stat-card">
               <div className="stat-num">🔥 {racha}</div>
-              <div className="stat-lbl">Días seguidos</div>
+              <div className="stat-lbl">{t("Días seguidos")}</div>
             </div>
             <div className="stat-card">
               <div className="stat-num">{totalCompletadas}</div>
-              <div className="stat-lbl">Unidades completadas</div>
+              <div className="stat-lbl">{t("Unidades completadas")}</div>
             </div>
             <div className="stat-card">
               <div className="stat-num">{modulosCompletos.length}</div>
-              <div className="stat-lbl">Módulos terminados</div>
+              <div className="stat-lbl">{t("Módulos terminados")}</div>
             </div>
           </div>
 
           <div>
-            <h2 className="seccion-titulo">🏅 Logros</h2>
+            <h2 className="seccion-titulo">🏅 {t("Logros")}</h2>
             <div className="logros-grid">
               {[
                 { icon: '🌱', nombre: 'Primera lección', desc: 'Completa tu primera unidad', obtenido: totalCompletadas >= 1 },
@@ -261,17 +263,17 @@ export default function PerfilPage() {
               ].map((logro, i) => (
                 <div key={i} className={`logro-card ${logro.obtenido ? 'obtenido' : 'bloqueado'}`}>
                   <div className="logro-icon">{logro.obtenido ? logro.icon : '🔒'}</div>
-                  <div className="logro-nombre">{logro.nombre}</div>
-                  <div className="logro-desc">{logro.desc}</div>
+                  <div className="logro-nombre"><Trans text={logro.nombre} /></div>
+                  <div className="logro-desc"><Trans text={logro.desc} /></div>
                 </div>
               ))}
             </div>
           </div>
 
           <div>
-            <h2 className="seccion-titulo">📜 Certificados</h2>
+            <h2 className="seccion-titulo">📜 {t("Certificados")}</h2>
             <p style={{ fontFamily: "'Nunito',sans-serif", fontSize: 14, color: '#8C6D45', marginBottom: 16 }}>
-              Completa todos las unidades de un módulo para descargar su certificado.
+              {language === "en" ? "Complete every unit in a module to download your certificate." : "Completa todos las unidades de un módulo para descargar su certificado."}
             </p>
             <div className="certs-grid">
               {modulos.map(modulo => {
@@ -284,9 +286,9 @@ export default function PerfilPage() {
                       {completo ? modulo.icono : '🔒'}
                     </div>
                     <div>
-                      <div className="cert-nombre">{modulo.nombre}</div>
+                      <div className="cert-nombre"><Trans text={modulo.nombre} /></div>
                       <div className="cert-estado">
-                        {completo ? `✅ Completado · Promedio ${promedio}%` : '🔒 Completa todas las unidades'}
+                        {language === 'en' ? (completo ? `✅ Completed · Average ${promedio}%` : '🔒 Complete all units') : (completo ? `✅ Completado · Promedio ${promedio}%` : '🔒 Completa todas las unidades')}
                       </div>
                     </div>
                     <button
@@ -294,7 +296,7 @@ export default function PerfilPage() {
                       disabled={!completo || descargando}
                       onClick={() => completo && generarCertificado(modulo)}
                     >
-                      {descargando ? 'Generando...' : '⬇️ Descargar'}
+                      {language === 'en' ? (descargando ? 'Generating...' : '⬇️ Download') : (descargando ? 'Generando...' : '⬇️ Descargar')}
                     </button>
                   </div>
                 )
