@@ -43,6 +43,7 @@ const TIPO_STYLE: Record<string, { bg: string; color: string; border: string }> 
 }
 
 export default function LecturaUnidadPage() {
+  const { t, language } = useLanguage()
   const params = useParams()
   const router = useRouter()
   const moduloId = params.moduloId as string
