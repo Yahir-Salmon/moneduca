@@ -1,11 +1,13 @@
 'use client'
 import { useState } from 'react'
+import { useLanguage, Trans } from '@/lib/language'
 
 export function PreguntaDragDrop({ opciones, respuestaCorrecta, onConfirm }: {
   opciones: { items: string[]; definitions: string[] }
   respuestaCorrecta: string
   onConfirm: (correcto: boolean, seleccion: string) => void
 }) {
+  const { language } = useLanguage()
   const correctMap: Record<string, string> = {}
   respuestaCorrecta.split('|').forEach(pair => {
     const [item, def] = pair.split(':')
@@ -51,11 +53,11 @@ export function PreguntaDragDrop({ opciones, respuestaCorrecta, onConfirm }: {
         @media (max-width: 480px) { .dd-wrap { grid-template-columns: 1fr; } }
       `}</style>
       <p style={{ fontFamily: "'Nunito',sans-serif", fontSize: 13, color: '#A87840', marginBottom: 12 }}>
-        🖱️ Arrastra cada concepto a su definición correcta
+        {language === 'en' ? '🖱️ Match each concept with its definition' : '🖱️ Arrastra cada concepto a su definición correcta'}
       </p>
       <div className="dd-wrap">
         <div>
-          <p className="dd-label">Conceptos</p>
+          <p className="dd-label">{language === "en" ? "Concepts" : "Conceptos"}</p>
           {opciones.items.map(item => (
             <div
               key={item}
@@ -63,12 +65,12 @@ export function PreguntaDragDrop({ opciones, respuestaCorrecta, onConfirm }: {
               draggable={!assignments[item] && !confirmado}
               onDragStart={() => setDragging(item)}
             >
-              {item}
+              <Trans text={item} />
             </div>
           ))}
         </div>
         <div>
-          <p className="dd-label">Definiciones</p>
+          <p className="dd-label">{language === "en" ? "Definitions" : "Definiciones"}</p>
           {opciones.definitions.map(def => {
             const assignedItem = Object.keys(assignments).find(k => assignments[k] === def)
             const isCorrect = confirmado && assignedItem && correctMap[assignedItem] === def
@@ -80,8 +82,8 @@ export function PreguntaDragDrop({ opciones, respuestaCorrecta, onConfirm }: {
                 onDragOver={e => e.preventDefault()}
                 onDrop={() => handleDrop(def)}
               >
-                {assignedItem && <div className="dd-chip">{assignedItem}</div>}
-                <div>{def}</div>
+                {assignedItem && <div className="dd-chip"><Trans text={assignedItem} /></div>}
+                <div><Trans text={def} /></div>
               </div>
             )
           })}
@@ -93,7 +95,7 @@ export function PreguntaDragDrop({ opciones, respuestaCorrecta, onConfirm }: {
           onClick={handleConfirm}
           disabled={!allAssigned}
         >
-          Confirmar
+          {language === 'en' ? 'Confirm' : 'Confirmar'}
         </button>
       )}
     </div>
