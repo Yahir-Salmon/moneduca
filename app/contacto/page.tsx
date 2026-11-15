@@ -1,7 +1,9 @@
 'use client'
 import { useState } from 'react'
+import { useLanguage } from '@/lib/language'
 
 export default function ContactoPage() {
+  const { t, language } = useLanguage()
   const [sent, setSent] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -23,7 +25,7 @@ export default function ContactoPage() {
       }
       setSent(true)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Hubo un error al enviar. Intenta de nuevo.')
+      setError(language === 'en' ? 'Could not send your message. Please try again.' : err instanceof Error ? err.message : 'Hubo un error al enviar. Intenta de nuevo.')
     } finally {
       setLoading(false)
     }
@@ -56,9 +58,9 @@ export default function ContactoPage() {
       <div className="contacto-wrap">
         <div className="contacto-inner">
           <div>
-            <span className="tag-deco">Escríbenos</span>
-            <h1 className="contacto-h1">¿Tienes dudas?<br />¡Hablemos!</h1>
-            <p className="contacto-desc">Estamos aquí para ayudarte. Ya sea que tengas una duda sobre un curso, quieras sugerir un tema o simplemente saludes — escríbenos.</p>
+            <span className="tag-deco">{t('Escríbenos')}</span>
+            <h1 className="contacto-h1">{t('¿Tienes dudas?')}<br />{t('¡Hablemos!')}</h1>
+            <p className="contacto-desc">{t('Estamos aquí para ayudarte. Ya sea que tengas una duda sobre un curso, quieras sugerir un tema o simplemente saludes — escríbenos.')}</p>
             {[
               ['📧', 'Email', 'moneduca.finanzas@gmail.com'],
               ['⏰', 'Tiempo de respuesta', 'Respondemos en menos de 24 horas'],
@@ -66,7 +68,7 @@ export default function ContactoPage() {
             ].map(([icon, label, val]) => (
               <div key={label} className="contact-item">
                 <div className="contact-icon">{icon}</div>
-                <div><div className="contact-label">{label}</div><div className="contact-val">{val}</div></div>
+                <div><div className="contact-label">{t(label)}</div><div className="contact-val">{t(val)}</div></div>
               </div>
             ))}
           </div>
@@ -74,26 +76,26 @@ export default function ContactoPage() {
             {sent ? (
               <div className="success-msg">
                 <div className="success-emoji">🎉</div>
-                <h3 className="success-h">¡Mensaje enviado!</h3>
-                <p className="success-sub">Te responderemos pronto a tu correo. ¡Mientras tanto explora nuestros cursos!</p>
+                <h3 className="success-h">{t('¡Mensaje enviado!')}</h3>
+                <p className="success-sub">{t('Te responderemos pronto a tu correo. ¡Mientras tanto explora nuestros cursos!')}</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit}>
                 {error && <div className="form-error">{error}</div>}
                 <div className="form-group">
-                  <label className="form-label">Tu nombre</label>
+                  <label className="form-label">{t('Tu nombre')}</label>
                   <input className="form-input" required placeholder="Ej. María García" value={form.nombre} onChange={e => setForm({...form, nombre: e.target.value})} minLength={2} maxLength={100} />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Tu email</label>
+                  <label className="form-label">{t('Tu email')}</label>
                   <input className="form-input" type="email" required placeholder="tu@email.com" value={form.email} onChange={e => setForm({...form, email: e.target.value})} maxLength={254} />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Mensaje</label>
+                  <label className="form-label">{t('Mensaje')}</label>
                   <textarea className="form-textarea" required placeholder="Cuéntanos en qué podemos ayudarte..." value={form.mensaje} onChange={e => setForm({...form, mensaje: e.target.value})} minLength={10} maxLength={2000} />
                 </div>
                 <button type="submit" disabled={loading} className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', fontSize: 16, padding: 16, opacity: loading ? 0.7 : 1 }}>
-                  {loading ? 'Enviando...' : 'Enviar mensaje ✦'}
+                  {loading ? t('Enviando...') : t('Enviar mensaje') + ' ✦'}
                 </button>
               </form>
             )}
