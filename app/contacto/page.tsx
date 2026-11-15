@@ -15,12 +15,15 @@ export default function ContactoPage() {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ nombre: form.nombre.trim(), email: form.email.trim(), mensaje: form.mensaje.trim() }),
       })
-      if (!res.ok) throw new Error()
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(typeof data.error === 'string' ? data.error : 'Hubo un error al enviar el mensaje.')
+      }
       setSent(true)
-    } catch {
-      setError('Hubo un error al enviar. Intenta de nuevo.')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Hubo un error al enviar. Intenta de nuevo.')
     } finally {
       setLoading(false)
     }
@@ -29,25 +32,25 @@ export default function ContactoPage() {
   return (
     <>
       <style>{`
-        .contacto-wrap { padding: 140px 0 96px; min-height: 100vh; }
-        .contacto-inner { max-width: 1100px; margin: 0 auto; padding: 0 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+        .contacto-wrap { padding: 140px 0 96px; min-height: 100vh; background: #FFF8E8; }
+        .contacto-inner { max-width: 1100px; margin: 0 auto; padding: 0 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
         .contacto-h1 { font-size: clamp(32px,4vw,52px); font-weight: 800; margin-bottom: 20px; }
-        .contacto-desc { font-size: 16px; color: #6B7280; margin-bottom: 40px; }
+        .contacto-desc { font-size: 16px; color: #8C6D45; margin-bottom: 40px; line-height: 1.7; }
         .contact-item { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 24px; }
-        .contact-icon { width: 44px; height: 44px; background: #D4F5EB; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+        .contact-icon { width: 44px; height: 44px; background: rgba(252,230,139,0.45); border: 1px solid #E8D9B8; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
         .contact-label { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
-        .contact-val { font-size: 14px; color: #6B7280; }
-        .form-card { background: white; border-radius: 24px; border: 1.5px solid #E5E7EB; padding: 40px; box-shadow: 0 8px 32px rgba(0,0,0,0.06); }
+        .contact-val { font-size: 14px; color: #8C6D45; }
+        .form-card { background: #FFFDF5; border-radius: 18px; border: 1px solid #E8D9B8; padding: 40px; box-shadow: 4px 4px 0 rgba(145,99,47,0.06); }
         .form-group { margin-bottom: 20px; }
-        .form-label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px; }
-        .form-input, .form-textarea { width: 100%; padding: 12px 16px; border: 1.5px solid #E5E7EB; border-radius: 12px; font-size: 15px; font-family: 'DM Sans',sans-serif; outline: none; transition: border 0.2s; background: #FAFAFA; color: #0D0D0D; }
-        .form-input:focus, .form-textarea:focus { border-color: #00C896; background: white; }
+        .form-label { display: block; font-size: 14px; font-weight: 700; margin-bottom: 8px; color: #6B4520; }
+        .form-input, .form-textarea { width: 100%; padding: 12px 16px; border: 1.5px solid #E8D9B8; border-radius: 12px; font-size: 15px; font-family: 'Nunito',sans-serif; outline: none; transition: border 0.2s; background: #FFF8E8; color: #3D2A0E; }
+        .form-input:focus, .form-textarea:focus { border-color: #C8934A; background: white; }
         .form-textarea { resize: vertical; min-height: 120px; }
         .form-error { background: #FFE8E8; color: #CC3333; border-radius: 10px; padding: 12px 16px; font-size: 14px; margin-bottom: 16px; }
         .success-msg { text-align: center; padding: 40px; }
         .success-emoji { font-size: 56px; margin-bottom: 16px; }
         .success-h { font-size: 24px; font-weight: 800; margin-bottom: 10px; }
-        .success-sub { color: #6B7280; }
+        .success-sub { color: #8C6D45; }
         @media (max-width: 768px) { .contacto-inner { grid-template-columns: 1fr; gap: 48px; } }
       `}</style>
       <div className="contacto-wrap">
@@ -79,15 +82,15 @@ export default function ContactoPage() {
                 {error && <div className="form-error">{error}</div>}
                 <div className="form-group">
                   <label className="form-label">Tu nombre</label>
-                  <input className="form-input" required placeholder="Ej. María García" value={form.nombre} onChange={e => setForm({...form, nombre: e.target.value})} />
+                  <input className="form-input" required placeholder="Ej. María García" value={form.nombre} onChange={e => setForm({...form, nombre: e.target.value})} minLength={2} maxLength={100} />
                 </div>
                 <div className="form-group">
                   <label className="form-label">Tu email</label>
-                  <input className="form-input" type="email" required placeholder="tu@email.com" value={form.email} onChange={e => setForm({...form, email: e.target.value})} />
+                  <input className="form-input" type="email" required placeholder="tu@email.com" value={form.email} onChange={e => setForm({...form, email: e.target.value})} maxLength={254} />
                 </div>
                 <div className="form-group">
                   <label className="form-label">Mensaje</label>
-                  <textarea className="form-textarea" required placeholder="Cuéntanos en qué podemos ayudarte..." value={form.mensaje} onChange={e => setForm({...form, mensaje: e.target.value})} />
+                  <textarea className="form-textarea" required placeholder="Cuéntanos en qué podemos ayudarte..." value={form.mensaje} onChange={e => setForm({...form, mensaje: e.target.value})} minLength={10} maxLength={2000} />
                 </div>
                 <button type="submit" disabled={loading} className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', fontSize: 16, padding: 16, opacity: loading ? 0.7 : 1 }}>
                   {loading ? 'Enviando...' : 'Enviar mensaje ✦'}
