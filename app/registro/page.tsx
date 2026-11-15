@@ -3,8 +3,10 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import { useLanguage } from '@/lib/language'
 
 export default function RegistroPage() {
+  const { t } = useLanguage()
   const [tab, setTab] = useState<'registro' | 'login'>('registro')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -114,32 +116,32 @@ export default function RegistroPage() {
       <div className="registro-wrap">
         <div className="registro-card">
           <div className="registro-logo">🦊 Moneduca</div>
-          <p className="registro-sub">Tu camino hacia la libertad financiera empieza aquí</p>
+          <p className="registro-sub">{t('Tu camino hacia la libertad financiera empieza aquí')}</p>
 
           <div className="tabs">
             <button className={`tab-btn ${tab === 'registro' ? 'active' : ''}`} onClick={() => { setTab('registro'); setError(''); setSuccess('') }}>
-              Crear cuenta
+              {t('Crear cuenta')}
             </button>
             <button className={`tab-btn ${tab === 'login' ? 'active' : ''}`} onClick={() => { setTab('login'); setError(''); setSuccess('') }}>
-              Iniciar sesión
+              {t('Iniciar sesión')}
             </button>
           </div>
 
-{error && <div className="form-error">⚠️ {error}</div>}
+{error && <div className="form-error">⚠️ {t(error)}</div>}
 
 {success ? (
   <div style={{ textAlign: 'center', padding: '20px 0' }}>
     <div style={{ fontSize: 56, marginBottom: 16 }}>🎉</div>
     <p style={{ fontFamily: "'Fredoka',sans-serif", fontSize: 22, fontWeight: 600, color: '#3D2A0E', marginBottom: 12 }}>
-      ¡Cuenta creada!
+      {t('¡Cuenta creada!')}
     </p>
     <p style={{ fontFamily: "'Nunito',sans-serif", fontSize: 15, color: '#8C6D45', lineHeight: 1.6, marginBottom: 24 }}>
-      Te enviamos un email de confirmación a<br/>
+      {t('Te enviamos un email de confirmación a')}<br/>
       <strong style={{ color: '#6B4520' }}>{success}</strong><br/>
-      Confírmalo y luego inicia sesión.
+      {t('Confírmalo y luego inicia sesión.')}
     </p>
     <button className="submit-btn" onClick={() => { setSuccess(''); setTab('login') }}>
-      Ir a iniciar sesión →
+      {t('Ir a iniciar sesión')} →
     </button>
   </div>
 ) : (
@@ -147,35 +149,35 @@ export default function RegistroPage() {
             {tab === 'registro' && (
               <>
                 <div className="form-group">
-                  <label className="form-label">¿Cómo te llamas?</label>
+                  <label className="form-label">{t('¿Cómo te llamas?')}</label>
                   <input className="form-input" required placeholder="Ej. Sofía" value={form.nombre} onChange={e => setForm({...form, nombre: e.target.value})} />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">¿Cuántos años tienes?</label>
+                  <label className="form-label">{t('¿Cuántos años tienes?')}</label>
                   <input className="form-input" type="number" min="10" max="18" required placeholder="Ej. 14" value={form.edad} onChange={e => setForm({...form, edad: e.target.value})} />
                 </div>
               </>
             )}
             <div className="form-group">
-              <label className="form-label">Tu email</label>
+              <label className="form-label">{t('Tu email')}</label>
               <input className="form-input" type="email" required placeholder="tu@email.com" value={form.email} onChange={e => setForm({...form, email: e.target.value})} />
             </div>
             <div className="form-group">
-              <label className="form-label">Contraseña</label>
-              <input className="form-input" type="password" required placeholder="Mínimo 8 caracteres" minLength={8} value={form.password} onChange={e => setForm({...form, password: e.target.value})} />
+              <label className="form-label">{t('Contraseña')}</label>
+              <input className="form-input" type="password" required placeholder={t('Mínimo 8 caracteres')} minLength={8} value={form.password} onChange={e => setForm({...form, password: e.target.value})} />
             </div>
             <button type="submit" className="submit-btn" disabled={loading}>
-              {loading ? 'Cargando...' : tab === 'registro' ? 'Crear mi cuenta ✦' : 'Iniciar sesión →'}
+              {loading ? t('Cargando...') : tab === 'registro' ? t('Crear mi cuenta') + ' ✦' : t('Iniciar sesión') + ' →'}
             </button>
 </form>
 )}
 
-          <div className="divider">o continúa con</div>
+          <div className="divider">{t('o continúa con')}</div>
           <button className="google-btn" onClick={handleGoogle}>
             <svg width="18" height="18" viewBox="0 0 18 18"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/><path d="M3.964 10.71c-.18-.54-.282-1.117-.282-1.71s.102-1.17.282-1.71V4.958H.957C.347 6.173 0 7.548 0 9s.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
-            Continuar con Google
+            {t('Continuar con Google')}
           </button>
-          <p className="terms">Al crear una cuenta aceptas nuestros <Link href="#">Términos</Link> y <Link href="#">Privacidad</Link>.</p>
+          <p className="terms">{t('Al crear una cuenta aceptas nuestros')} <Link href="#">{t('Términos')}</Link> y <Link href="#">{t('Privacidad')}</Link>.</p>
         </div>
       </div>
     </>
