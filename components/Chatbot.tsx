@@ -1,12 +1,14 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
+import { useLanguage } from '@/lib/language'
 
 interface Message { role: 'user' | 'assistant'; content: string }
 
 const SUGGESTIONS = ['¿Qué es un presupuesto?', '¿Cómo empiezo a ahorrar?', '¿Qué es la tasa de interés?']
 
 export default function Chatbot() {
+  const { language, t } = useLanguage()
   const [messages, setMessages] = useState<Message[]>([
     { role: 'assistant', content: '¡Hola! Soy Monedoki 🦊 Tu guía de finanzas personales. Puedo explicarte cualquier duda sobre ahorro, presupuestos, crédito o inversión. ¿Qué quieres aprender hoy?' }
   ])
@@ -38,7 +40,7 @@ export default function Chatbot() {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: [...messages, userMsg], userName }),
+        body: JSON.stringify({ messages: [...messages, userMsg], userName, language }),
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok || typeof data.content !== 'string') {
@@ -50,6 +52,10 @@ export default function Chatbot() {
       setMessages(prev => [...prev, { role: 'assistant', content: `${message} Intenta de nuevo más tarde.` }])
     } finally { setLoading(false) }
   }
+
+  useEffect(() => {
+    setMessages([{ role: 'assistant', content: language === 'en' ? `Hi${userName ? ', ' + userName : ''}! I'm Monedoki 🦊 Your financial learning companion. What would you like to learn?` : `¡Hola${userName ? ', ' + userName : ''}! Soy Monedoki 🦊 Tu guía de finanzas. ¿En qué te puedo ayudar hoy?` }])
+  }, [language])
 
   useEffect(() => {
     messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: 'smooth' })
@@ -97,7 +103,7 @@ export default function Chatbot() {
           </div>
           <div>
             <div className="chat-hdr-name">Monedoki</div>
-            <div className="chat-hdr-status"><span className="status-dot" /> Asistente financiero</div>
+            <div className="chat-hdr-status"><span className="status-dot" /> {t('Asistente financiero')}</div>
           </div>
         </div>
         <div className="chat-msgs" ref={messagesRef}>
@@ -126,13 +132,13 @@ export default function Chatbot() {
         </div>
         {messages.length <= 1 && (
           <div className="chat-sugg">
-            {SUGGESTIONS.map(s => <button key={s} className="sugg-btn" onClick={() => send(s)}>{s}</button>)}
+            {SUGGESTIONS.map(s => <button key={s} className="sugg-btn" onClick={() => send(t(s))}>{t(s)}</button>)}
           </div>
         )}
         <div className="chat-input-row">
           <input className="chat-input" value={input} onChange={e => setInput(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && send(input)}
-            placeholder="Pregúntale algo a Monedoki..." disabled={loading} maxLength={500} aria-label="Escribe tu pregunta para Monedoki" />
+            placeholder={t("Pregúntale algo a Monedoki...")} disabled={loading} maxLength={500} aria-label={t("Escribe tu pregunta para Monedoki")} />
           <button className="chat-send" type="button" aria-label="Enviar mensaje" onClick={() => send(input)} disabled={loading || !input.trim()}>➤</button>
         </div>
       </div>
