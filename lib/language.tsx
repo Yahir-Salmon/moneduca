@@ -210,7 +210,13 @@ function scheduleTranslation(text: string) {
   requestScheduled = true
   window.setTimeout(async () => {
     requestScheduled = false
-    const requested = Array.from(pending).slice(0, 20)
+    const requested: string[] = []
+    let totalLength = 0
+    for (const candidate of pending) {
+      if (requested.length >= 20 || totalLength + candidate.length > 6000) break
+      requested.push(candidate)
+      totalLength += candidate.length
+    }
     requested.forEach(item => pending.delete(item))
     if (!requested.length) return
     try {
@@ -224,8 +230,9 @@ function scheduleTranslation(text: string) {
       if (!Array.isArray(data.translations) || data.translations.length !== requested.length) {
         throw new Error('Unexpected response')
       }
+      const translations: unknown[] = data.translations
       requested.forEach((item, index) => {
-        const translated = data.translations?.[index]
+        const translated = translations[index]
         if (typeof translated === 'string' && translated.trim()) {
           translatedCache.set(item, translated)
         }
