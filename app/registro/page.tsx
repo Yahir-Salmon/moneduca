@@ -17,6 +17,12 @@ export default function RegistroPage() {
     setLoading(true)
     setError('')
 
+    if (!form.nombre.trim() || !form.edad || Number(form.edad) < 10 || Number(form.edad) > 18) {
+      setError('Completa tu nombre y una edad válida.')
+      setLoading(false)
+      return
+    }
+
     const { data, error: signUpError } = await supabase.auth.signUp({
       email: form.email,
       password: form.password,
@@ -34,11 +40,17 @@ export default function RegistroPage() {
     }
 
     if (data.user) {
-      await supabase.from('profiles').upsert({
-        id: data.user.id,
-        nombre: form.nombre,
-        edad: parseInt(form.edad),
-      })
+      // Si la confirmación de email está habilitada, la sesión puede ser nula.
+      // Un trigger de Supabase debería crear el perfil al confirmar el usuario.
+      // Cuando la sesión está activa, el usuario puede guardar su propio perfil con RLS.
+      if (data.session) {
+        const { error: profileError } = await supabase.from('profiles').upsert({
+          id: data.user.id,
+          nombre: form.nombre.trim(),
+          edad: parseInt(form.edad),
+        })
+        if (profileError) console.error('No se pudo guardar el perfil:', profileError.message)
+      }
       setSuccess(form.email)
       setForm({ nombre: '', email: '', password: '', edad: '' })
     }
@@ -56,7 +68,7 @@ export default function RegistroPage() {
     })
 
     if (loginError) {
-      setError('Email o contraseña incorrectos.')
+      setError('No se pudo iniciar sesión. Revisa tus datos y confirma tu correo si es necesario.')
       setLoading(false)
       return
     }
@@ -65,10 +77,12 @@ export default function RegistroPage() {
   }
 
   const handleGoogle = async () => {
-    await supabase.auth.signInWithOAuth({
+    setError('')
+    const { error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: `${window.location.origin}/dashboard` }
+      options: { redirectTo: `${window.location.origin}/auth/callback` }
     })
+    if (oauthError) setError('No pudimos conectar con Google. Intenta de nuevo.')
   }
 
   return (
@@ -138,7 +152,7 @@ export default function RegistroPage() {
                 </div>
                 <div className="form-group">
                   <label className="form-label">¿Cuántos años tienes?</label>
-                  <input className="form-input" type="number" min="10" max="18" placeholder="Ej. 14" value={form.edad} onChange={e => setForm({...form, edad: e.target.value})} />
+                  <input className="form-input" type="number" min="10" max="18" required placeholder="Ej. 14" value={form.edad} onChange={e => setForm({...form, edad: e.target.value})} />
                 </div>
               </>
             )}
@@ -148,7 +162,7 @@ export default function RegistroPage() {
             </div>
             <div className="form-group">
               <label className="form-label">Contraseña</label>
-              <input className="form-input" type="password" required placeholder="Mínimo 6 caracteres" minLength={6} value={form.password} onChange={e => setForm({...form, password: e.target.value})} />
+              <input className="form-input" type="password" required placeholder="Mínimo 8 caracteres" minLength={8} value={form.password} onChange={e => setForm({...form, password: e.target.value})} />
             </div>
             <button type="submit" className="submit-btn" disabled={loading}>
               {loading ? 'Cargando...' : tab === 'registro' ? 'Crear mi cuenta ✦' : 'Iniciar sesión →'}
