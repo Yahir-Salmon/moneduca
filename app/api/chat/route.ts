@@ -26,6 +26,10 @@ const MAX_MESSAGES = 20
 const MAX_MESSAGE_LENGTH = 500
 
 export async function POST(req: NextRequest) {
+  if (!process.env.GROQ_API_KEY) {
+    return NextResponse.json({ error: 'El asistente está temporalmente fuera de servicio.' }, { status: 503 })
+  }
+
   try {
     const body = await req.json()
 
@@ -33,7 +37,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Datos inválidos' }, { status: 400 })
     }
 
-    const { messages, userName } = body
+    const { messages, userName, language } = body
 
     // Validar mensajes
     if (!Array.isArray(messages) || messages.length === 0) {
@@ -58,9 +62,11 @@ export async function POST(req: NextRequest) {
       ? userName.replace(/[<>]/g, '').trim().slice(0, 60)
       : null
 
-    const systemWithName = nombreLimpio
-      ? `${SYSTEM_PROMPT}\n\nEl usuario se llama ${nombreLimpio}.`
-      : SYSTEM_PROMPT
+    const systemWithName = [
+      SYSTEM_PROMPT,
+      language === 'en' ? 'Responde en inglés claro, apropiado para estudiantes de secundaria. Mantén ejemplos financieros mexicanos cuando sean relevantes.' : 'Responde en español de México.',
+      nombreLimpio ? `El usuario se llama ${nombreLimpio}.` : '',
+    ].filter(Boolean).join('\n\n')
 
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
@@ -69,8 +75,8 @@ export async function POST(req: NextRequest) {
         'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
       },
       body: JSON.stringify({
-        model: 'llama-3.1-8b-instant',
-        max_tokens: 600,
+        model: process.env.GROQ_MODEL || 'openai/gpt-oss-20b',
+        max_tokens: 900,
         temperature: 0.7,
         messages: [
           { role: 'system', content: systemWithName },
@@ -80,9 +86,11 @@ export async function POST(req: NextRequest) {
     })
 
     if (!response.ok) {
-      const err = await response.json()
-      console.error('Groq error:', err)
-      throw new Error('Groq API error')
+      console.error('Groq request failed with status:', response.status)
+      return NextResponse.json(
+        { error: 'No pudimos conectar con el asistente. Intenta de nuevo más tarde.' },
+        { status: 502 }
+      )
     }
 
     const data = await response.json()
@@ -96,7 +104,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error('Chat error:', error)
     return NextResponse.json(
-      { content: 'Hubo un error. Por favor intenta de nuevo.' },
+      { error: 'No se pudo procesar la solicitud. Intenta de nuevo.' },
       { status: 500 }
     )
   }

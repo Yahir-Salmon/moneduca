@@ -1,11 +1,13 @@
 'use client'
 import { useState } from 'react'
+import { useLanguage, Trans } from '@/lib/language'
 
 export function PreguntaOrdenar({ opciones, respuestaCorrecta, onConfirm }: {
   opciones: string[]
   respuestaCorrecta: string
   onConfirm: (correcto: boolean, seleccion: string) => void
 }) {
+  const { language } = useLanguage()
   const [items, setItems] = useState([...opciones].sort(() => Math.random() - 0.5))
   const [confirmado, setConfirmado] = useState(false)
   const [dragIdx, setDragIdx] = useState<number | null>(null)
@@ -37,7 +39,7 @@ export function PreguntaOrdenar({ opciones, respuestaCorrecta, onConfirm }: {
         .confirmado-mal { border-color: #993C1D !important; background: #FAECE7 !important; }
       `}</style>
       <p style={{ fontFamily: "'Nunito',sans-serif", fontSize: 13, color: '#A87840', marginBottom: 12 }}>
-        🖱️ Arrastra los elementos para ordenarlos correctamente
+        {language === 'en' ? '🖱️ Drag the items into the correct order' : '🖱️ Arrastra los elementos para ordenarlos correctamente'}
       </p>
       {items.map((item, i) => (
         <div
@@ -49,7 +51,7 @@ export function PreguntaOrdenar({ opciones, respuestaCorrecta, onConfirm }: {
           onDrop={() => handleDrop(i)}
         >
           <span className="orden-num">{i + 1}</span>
-          {item}
+          <Trans text={item} />
         </div>
       ))}
       {!confirmado && (
@@ -57,7 +59,7 @@ export function PreguntaOrdenar({ opciones, respuestaCorrecta, onConfirm }: {
           style={{ width: '100%', padding: '15px', borderRadius: '100px', border: 'none', background: '#6B4520', color: '#FCE68B', fontFamily: "'Fredoka',sans-serif", fontSize: '17px', fontWeight: 600, cursor: 'pointer', marginTop: 8 }}
           onClick={handleConfirm}
         >
-          Confirmar orden
+          {language === 'en' ? 'Confirm order' : 'Confirmar orden'}
         </button>
       )}
     </div>

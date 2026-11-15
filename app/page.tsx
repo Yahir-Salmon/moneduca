@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Chatbot from '@/components/Chatbot'
 import { supabase } from '@/lib/supabase'
+import { useLanguage } from '@/lib/language'
 
 const modulos = [
   { emoji: '01', color: 'rgba(252,230,139,0.5)', accent: '#C8934A', titulo: 'Bases: Historia del dinero', desc: 'Descubre cómo nació el dinero, por qué existe y cómo ha cambiado el mundo.', nivel: 'Básico' },
@@ -22,6 +23,7 @@ const pasos = [
 ]
 
 export default function HomePage() {
+  const { t } = useLanguage()
   const [loggedIn, setLoggedIn] = useState(false)
   const router = useRouter()
 
@@ -39,15 +41,11 @@ export default function HomePage() {
     <>
       <style>{`
         .hero { min-height: 100vh; padding-top: 68px; display: flex; align-items: center; background: #FFF8E8; position: relative; overflow: hidden; }
-        .hero::before { content: ''; position: absolute; top: -150px; right: -150px; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(250,191,77,0.18) 0%, transparent 70%); pointer-events: none; }
         .hero-inner { max-width: 1200px; margin: 0 auto; padding: 80px 24px; display: grid; grid-template-columns: 1fr 400px; gap: 64px; align-items: center; position: relative; z-index: 1; }
-        .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: rgba(252,230,139,0.6); color: #6B4520; padding: 8px 16px; border-radius: 100px; font-size: 13px; font-weight: 700; margin-bottom: 24px; font-family: 'Nunito',sans-serif; }
-        .hero-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(250,191,77,1); animation: pulse 2s infinite; }
-        @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.5);opacity:0.6} }
         .hero-h1 { font-size: clamp(38px,5vw,60px); font-weight: 700; line-height: 1.05; margin-bottom: 20px; color: #3D2A0E; }
         .hero-h1 .accent { color: #C8934A; }
         .hero-h1 .subray { position: relative; display: inline-block; }
-        .hero-h1 .subray::after { content: ''; position: absolute; bottom: -4px; left: 0; right: 0; height: 4px; background: rgba(250,191,77,1); border-radius: 2px; }
+        .hero-h1 .subray::after { content: ''; position: absolute; bottom: -5px; left: 0; right: 0; height: 2px; background: #C8934A; opacity: 0.65; }
         .hero-desc { font-size: 17px; color: #8C6D45; margin-bottom: 36px; line-height: 1.7; font-family: 'Nunito',sans-serif; }
         .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 48px; }
         .hero-stats { display: flex; gap: 32px; }
@@ -55,7 +53,7 @@ export default function HomePage() {
         .stat-label { font-size: 13px; color: #A87840; font-family: 'Nunito',sans-serif; }
         /* Hero right - Monedoki */
         .hero-right { display: flex; flex-direction: column; align-items: center; gap: 16px; }
-        .mk-bubble { background: rgba(250,191,77,1); border-radius: 20px 20px 20px 6px; padding: 14px 18px; font-family: 'Fredoka',sans-serif; font-size: 16px; font-weight: 600; color: #3D2A0E; text-align: center; box-shadow: 4px 4px 0px rgba(145,99,47,0.2); }
+        .mk-bubble { background: #FFFDF5; border: 1px solid #E8D9B8; border-radius: 14px; padding: 14px 18px; font-family: 'Fredoka',sans-serif; font-size: 16px; font-weight: 600; color: #3D2A0E; text-align: center; }
         .mk-hero-img { width: 200px; height: 200px; object-fit: contain; filter: drop-shadow(4px 8px 12px rgba(145,99,47,0.2)); }
         .hero-card { background: #FFFDF5; border-radius: 20px; border: 1px solid #E8D9B8; padding: 20px; width: 100%; box-shadow: 4px 4px 0px rgba(145,99,47,0.08); }
         .card-label { font-size: 11px; color: #A87840; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 14px; font-weight: 700; font-family: 'Nunito',sans-serif; }
@@ -116,27 +114,26 @@ export default function HomePage() {
       <section className="hero">
         <div className="hero-inner">
           <div>
-            <div className="hero-eyebrow"><span className="hero-dot" /> Educación financiera para jóvenes</div>
             <h1 className="hero-h1">
-              Tu dinero,{' '}<span className="subray">tus reglas.</span><br />
-              <span className="accent">Aprende hoy.</span>
+              {t('Tu dinero,')}{' '}<span className="subray">{t('tus reglas.')}</span><br />
+              <span className="accent">{t('Aprende hoy.')}</span>
             </h1>
-            <p className="hero-desc">Moneduca te enseña todo lo que la escuela no te dijo sobre el dinero. 6 módulos, lecciones interactivas y Monedoki como tu guía.</p>
+            <p className="hero-desc">{t('Aprende a organizar tus gastos, ahorrar y entender cómo funciona el dinero. Lecciones cortas, ejercicios prácticos y Monedoki para resolver tus dudas.')}</p>
             <div className="hero-btns">
-              <button onClick={handleCTA} className="btn btn-primary" style={{ fontSize: 16, padding: '16px 32px' }}>Empezar gratis</button>
-              <Link href="/cursos" className="btn btn-secondary" style={{ fontSize: 16, padding: '16px 32px' }}>Ver módulos</Link>
+              <button onClick={handleCTA} className="btn btn-primary" style={{ fontSize: 16, padding: '16px 32px' }}>{t('Empezar gratis')}</button>
+              <Link href="/cursos" className="btn btn-secondary" style={{ fontSize: 16, padding: '16px 32px' }}>{t('Ver módulos')}</Link>
             </div>
             <div className="hero-stats">
               {[['6', 'módulos'], ['100%', 'gratuito'], ['15min', 'por unidad']].map(([n, l]) => (
-                <div key={l}><div className="stat-num">{n}</div><div className="stat-label">{l}</div></div>
+                <div key={l}><div className="stat-num">{n}</div><div className="stat-label">{t(l)}</div></div>
               ))}
             </div>
           </div>
           <div className="hero-right">
-            <div className="mk-bubble">Hola, soy Monedoki.<br/>Aprende a manejar tu dinero.</div>
+            <div className="mk-bubble">{t('Hola, soy Monedoki.')}<br/>{t('Aprende a manejar tu dinero.')}</div>
             <img src="/monedoki.png" alt="Monedoki" className="mk-hero-img" onError={e => { (e.target as HTMLImageElement).style.display='none' }} />
             <div className="hero-card">
-              <p className="card-label">Tu progreso esta semana</p>
+              <p className="card-label">{t('Ejemplo de tu avance')}</p>
               {[{ name: 'Historia del dinero', pct: 75, color: 'rgba(250,191,77,1)' }, { name: 'Presupuesto y ahorro', pct: 40, color: '#C8934A' }, { name: 'Tarjetas de crédito', pct: 10, color: '#8C6D45' }].map(item => (
                 <div key={item.name} className="prog-item">
                   <div className="prog-header">
@@ -155,19 +152,19 @@ export default function HomePage() {
       <section className="section">
         <div className="container-md">
           <div className="section-header">
-            <span className="tag-deco">Lo que aprenderás</span>
-            <h2 className="section-h2">6 módulos para dominar tu dinero</h2>
-            <p className="section-sub">Desde la historia del dinero hasta cómo protegerte de estafas. Todo lo que necesitas.</p>
+            <span className="tag-deco">{t('Lo que aprenderás')}</span>
+            <h2 className="section-h2">{t('6 módulos para dominar tu dinero')}</h2>
+            <p className="section-sub">{t('Desde la historia del dinero hasta cómo protegerte de estafas. Todo lo que necesitas.')}</p>
           </div>
         </div>
         <div className="modulos-grid">
           {modulos.map((m, i) => (
             <Link key={i} href={`/cursos#${['bases','presupuesto','inversiones','tarjetas','impuestos','estafas'][i]}`} className="modulo-card">
               <div className="modulo-icon" style={{ background: m.color }}>{m.emoji}</div>
-              <div className="modulo-nivel" style={{ background: m.color, color: m.accent }}>{m.nivel}</div>
-              <h3 className="modulo-titulo">{m.titulo}</h3>
-              <p className="modulo-desc">{m.desc}</p>
-              <div className="modulo-arrow">Ver módulo →</div>
+              <div className="modulo-nivel" style={{ background: m.color, color: m.accent }}>{t(m.nivel)}</div>
+              <h3 className="modulo-titulo">{t(m.titulo)}</h3>
+              <p className="modulo-desc">{t(m.desc)}</p>
+              <div className="modulo-arrow">{t('Ver módulo')} →</div>
             </Link>
           ))}
         </div>
@@ -177,14 +174,14 @@ export default function HomePage() {
       <div className="container-md">
         <div className="mk-cta">
           <div>
-            <span className="tag-deco">Tu compañero de aprendizaje</span>
+            <span className="tag-deco">{t('Tu compañero de aprendizaje')}</span>
             <h2 style={{ fontFamily: "'Fredoka',sans-serif", fontSize: 'clamp(22px,3vw,34px)', fontWeight: 700, marginBottom: 14, color: '#3D2A0E' }}>
-              Monedoki te acompaña en cada lección
+              {t('Monedoki te acompaña en cada lección')}
             </h2>
             <p style={{ fontSize: 15, color: '#8C6D45', marginBottom: 24, fontFamily: "'Nunito',sans-serif", lineHeight: 1.7 }}>
-              Aprende con preguntas interactivas, feedback inmediato y la compañía de Monedoki. Te celebra cuando aciertas y te anima cuando te equivocas.
+              {t('Aprende con preguntas interactivas, feedback inmediato y la compañía de Monedoki. Te celebra cuando aciertas y te anima cuando te equivocas.')}
             </p>
-            <button onClick={handleCTA} className="btn btn-primary">Conocer a Monedoki</button>
+            <button onClick={handleCTA} className="btn btn-primary">{t('Conocer a Monedoki')}</button>
           </div>
           <img src="/monedoki.png" alt="Monedoki" className="mk-cta-img" onError={e => { (e.target as HTMLImageElement).style.display='none' }} />
         </div>
@@ -194,12 +191,12 @@ export default function HomePage() {
       <section className="chat-section">
         <div className="chat-inner">
           <div>
-            <span className="tag-deco">Asistente financiero</span>
-            <h2 className="chat-h2">Pregúntale a Monedoki lo que quieras</h2>
-            <p className="chat-desc">Monedoki no solo aparece en las lecciones — también puede resolver tus dudas financieras en cualquier momento, con lenguaje fácil y ejemplos de tu vida diaria.</p>
+            <span className="tag-deco">{t('Asistente financiero')}</span>
+            <h2 className="chat-h2">{t('Pregúntale a Monedoki lo que quieras')}</h2>
+            <p className="chat-desc">{t('Monedoki no solo aparece en las lecciones — también puede resolver tus dudas financieras en cualquier momento, con lenguaje fácil y ejemplos de tu vida diaria.')}</p>
             <ul className="chat-feats">
-              {['Explica conceptos difíciles en palabras simples', 'Responde dudas de tus lecciones al instante', 'Ejemplos con situaciones cotidianas mexicanas', 'Disponible las 24 horas del día'].map((t, i) => (
-                <li key={i} className="chat-feat"><span className="feat-icon">🦊</span><span>{t}</span></li>
+              {['Explica conceptos difíciles en palabras simples', 'Responde dudas de tus lecciones al instante', 'Ejemplos con situaciones cotidianas mexicanas', 'Disponible las 24 horas del día'].map((text, i) => (
+                <li key={i} className="chat-feat"><span className="feat-icon">🦊</span><span>{t(text)}</span></li>
               ))}
             </ul>
           </div>
@@ -211,16 +208,16 @@ export default function HomePage() {
       <section className="section">
         <div className="container-md">
           <div className="section-header">
-            <span className="tag-deco">Cómo funciona</span>
-            <h2 className="section-h2">Empieza en 4 pasos sencillos</h2>
+            <span className="tag-deco">{t('Cómo funciona')}</span>
+            <h2 className="section-h2">{t('Empieza en 4 pasos sencillos')}</h2>
           </div>
         </div>
         <div className="pasos-grid">
           {pasos.map((p, i) => (
             <div key={i}>
               <div className="paso-num">{p.num}</div>
-              <h3 className="paso-titulo">{p.titulo}</h3>
-              <p className="paso-desc">{p.desc}</p>
+              <h3 className="paso-titulo">{t(p.titulo)}</h3>
+              <p className="paso-desc">{t(p.desc)}</p>
             </div>
           ))}
         </div>
@@ -229,9 +226,9 @@ export default function HomePage() {
       {/* CTA */}
       <div className="cta-wrap">
         <div className="cta-box">
-          <h2 className="cta-h2">¿Listo para <span>dominar</span> tu dinero?</h2>
-          <p className="cta-desc">Únete gratis hoy. Sin tarjeta, sin compromisos.</p>
-          <button onClick={handleCTA} className="btn btn-yellow" style={{ fontSize: 17, padding: '18px 40px', position: 'relative', zIndex: 1 }}>Crear mi cuenta gratis</button>
+          <h2 className="cta-h2">{t('¿Listo para')} <span>{t('dominar')}</span> {t('tu dinero?')}</h2>
+          <p className="cta-desc">{t('Únete gratis hoy. Sin tarjeta, sin compromisos.')}</p>
+          <button onClick={handleCTA} className="btn btn-yellow" style={{ fontSize: 17, padding: '18px 40px', position: 'relative', zIndex: 1 }}>{t('Crear mi cuenta gratis')}</button>
         </div>
       </div>
     </>

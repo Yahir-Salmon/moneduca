@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { useLanguage, Trans } from '@/lib/language'
 
 interface Modulo {
   id: string
@@ -21,6 +22,7 @@ interface Unidad {
 }
 
 export default function BibliotecaPage() {
+  const { t } = useLanguage()
   const [modulos, setModulos] = useState<Modulo[]>([])
   const [unidades, setUnidades] = useState<Unidad[]>([])
   const [loading, setLoading] = useState(true)
@@ -45,7 +47,7 @@ export default function BibliotecaPage() {
 
   if (loading) return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#FFF8E8' }}>
-      <p style={{ fontFamily: "'Fredoka',sans-serif", fontSize: 20, color: '#6B4520' }}>Cargando biblioteca...</p>
+      <p style={{ fontFamily: "'Fredoka',sans-serif", fontSize: 20, color: '#6B4520' }}>{t('Cargando biblioteca...')}</p>
     </div>
   )
 
@@ -85,10 +87,10 @@ export default function BibliotecaPage() {
       <div className="bib-wrap">
         <div className="bib-header">
           <div className="bib-header-inner">
-            <p className="bib-eyebrow">Material de estudio</p>
-            <h1 className="bib-h1">Biblioteca</h1>
+            <p className="bib-eyebrow">{t('Material de estudio')}</p>
+            <h1 className="bib-h1">{t('Biblioteca')}</h1>
             <p className="bib-desc">
-              Lee el contenido de cada unidad sin presiones. Repasa lo que necesites antes de practicar.
+              {t('Lee el contenido de cada unidad sin presiones. Repasa lo que necesites antes de practicar.')}
             </p>
           </div>
         </div>
@@ -102,8 +104,8 @@ export default function BibliotecaPage() {
             return (
               <div key={modulo.id} className="modulo-section">
                 <div className="modulo-header-bib">
-                  <span className="modulo-num">Módulo {mi + 1}</span>
-                  <h2 className="modulo-nombre-bib">{modulo.nombre}</h2>
+                  <span className="modulo-num">{t('Módulo')} {mi + 1}</span>
+                  <h2 className="modulo-nombre-bib"><Trans text={modulo.nombre} /></h2>
                 </div>
                 <div className="unidades-lista">
                   {unidadesModulo.map(unidad => (
@@ -114,12 +116,12 @@ export default function BibliotecaPage() {
                     >
                       <span className="unidad-orden">{unidad.orden}</span>
                       <div className="unidad-info">
-                        <div className="unidad-nombre-bib">{unidad.nombre}</div>
+                        <div className="unidad-nombre-bib"><Trans text={unidad.nombre} /></div>
                         {unidad.descripcion && (
-                          <div className="unidad-desc-bib">{unidad.descripcion}</div>
+                          <div className="unidad-desc-bib"><Trans text={unidad.descripcion} /></div>
                         )}
                       </div>
-                      <span className="unidad-arrow">Leer</span>
+                      <span className="unidad-arrow">{t('Leer')}</span>
                     </Link>
                   ))}
                 </div>

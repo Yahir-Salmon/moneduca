@@ -2,8 +2,10 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import { useLanguage } from '@/lib/language'
 
 export default function AuthCallbackPage() {
+  const { t } = useLanguage()
   const router = useRouter()
 
   useEffect(() => {
@@ -38,10 +40,10 @@ export default function AuthCallbackPage() {
     }}>
       <span style={{ fontSize: 64 }}>🦊</span>
       <p style={{ fontFamily: "'Fredoka',sans-serif", fontSize: 22, color: '#3D2A0E' }}>
-        Verificando tu cuenta...
+        {t('Verificando tu cuenta...')}
       </p>
       <p style={{ fontFamily: "'Nunito',sans-serif", fontSize: 15, color: '#8C6D45' }}>
-        En un momento te llevamos a tu dashboard
+        {t('En un momento te llevamos a tu dashboard')}
       </p>
     </div>
   )

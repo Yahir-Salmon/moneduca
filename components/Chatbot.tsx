@@ -1,12 +1,14 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
+import { useLanguage } from '@/lib/language'
 
 interface Message { role: 'user' | 'assistant'; content: string }
 
 const SUGGESTIONS = ['¿Qué es un presupuesto?', '¿Cómo empiezo a ahorrar?', '¿Qué es la tasa de interés?']
 
 export default function Chatbot() {
+  const { language, t } = useLanguage()
   const [messages, setMessages] = useState<Message[]>([
     { role: 'assistant', content: '¡Hola! Soy Monedoki 🦊 Tu guía de finanzas personales. Puedo explicarte cualquier duda sobre ahorro, presupuestos, crédito o inversión. ¿Qué quieres aprender hoy?' }
   ])
@@ -28,8 +30,9 @@ export default function Chatbot() {
   }, [])
 
   const send = async (text: string) => {
-    if (!text.trim() || loading) return
-    const userMsg: Message = { role: 'user', content: text }
+    const cleanText = text.trim().slice(0, 500)
+    if (!cleanText || loading) return
+    const userMsg: Message = { role: 'user', content: cleanText }
     setMessages(prev => [...prev, userMsg])
     setInput('')
     setLoading(true)
@@ -37,14 +40,26 @@ export default function Chatbot() {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: [...messages, userMsg], userName }),
+        body: JSON.stringify({ messages: [...messages, userMsg], userName, language }),
       })
-      const data = await res.json()
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok || typeof data.content !== 'string') {
+        throw new Error(typeof data.error === 'string' ? data.error : 'No se pudo obtener la respuesta.')
+      }
       setMessages(prev => [...prev, { role: 'assistant', content: data.content }])
-    } catch {
-      setMessages(prev => [...prev, { role: 'assistant', content: 'Lo siento, hubo un error. Intenta de nuevo.' }])
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'No se pudo conectar con Monedoki.'
+      setMessages(prev => [...prev, { role: 'assistant', content: `${message} Intenta de nuevo más tarde.` }])
     } finally { setLoading(false) }
   }
+
+  useEffect(() => {
+    setMessages([{ role: 'assistant', content: language === 'en' ? `Hi${userName ? ', ' + userName : ''}! I'm Monedoki 🦊 Your financial learning companion. What would you like to learn?` : `¡Hola${userName ? ', ' + userName : ''}! Soy Monedoki 🦊 Tu guía de finanzas. ¿En qué te puedo ayudar hoy?` }])
+  }, [language])
+
+  useEffect(() => {
+    messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: 'smooth' })
+  }, [messages, loading])
 
   return (
     <>
@@ -84,11 +99,11 @@ export default function Chatbot() {
       <div className="chatbot">
         <div className="chat-hdr">
           <div className="chat-avatar">
-            <img src="/monedoki-feliz.png" alt="Monedoki" onError={e => { (e.target as HTMLImageElement).style.display='none'; (e.target as HTMLImageElement).parentElement!.innerHTML='🦊' }} />
+            <img src="/monedoki.png" alt="Monedoki" onError={e => { (e.target as HTMLImageElement).style.display='none'; (e.target as HTMLImageElement).parentElement!.innerHTML='🦊' }} />
           </div>
           <div>
             <div className="chat-hdr-name">Monedoki</div>
-            <div className="chat-hdr-status"><span className="status-dot" /> En línea</div>
+            <div className="chat-hdr-status"><span className="status-dot" /> {t('Asistente financiero')}</div>
           </div>
         </div>
         <div className="chat-msgs" ref={messagesRef}>
@@ -98,7 +113,7 @@ export default function Chatbot() {
             ) : (
               <div key={i} className="msg-bot-wrap">
                 <div className="msg-bot-avatar">
-                  <img src="/monedoki-neutral.png" alt="" onError={e => { (e.target as HTMLImageElement).style.display='none'; (e.target as HTMLImageElement).parentElement!.innerHTML='🦊' }} />
+                  <img src="/monedoki.png" alt="" onError={e => { (e.target as HTMLImageElement).style.display='none'; (e.target as HTMLImageElement).parentElement!.innerHTML='🦊' }} />
                 </div>
                 <div className="msg msg-bot">{m.content}</div>
               </div>
@@ -107,7 +122,7 @@ export default function Chatbot() {
           {loading && (
             <div className="typing">
               <div className="msg-bot-avatar">
-                <img src="/monedoki-pensar.png" alt="" onError={e => { (e.target as HTMLImageElement).style.display='none'; (e.target as HTMLImageElement).parentElement!.innerHTML='🦊' }} />
+                <img src="/monedoki.png" alt="" onError={e => { (e.target as HTMLImageElement).style.display='none'; (e.target as HTMLImageElement).parentElement!.innerHTML='🦊' }} />
               </div>
               <div className="typing-bubble">
                 <span className="typing-dot"/><span className="typing-dot"/><span className="typing-dot"/>
@@ -117,14 +132,14 @@ export default function Chatbot() {
         </div>
         {messages.length <= 1 && (
           <div className="chat-sugg">
-            {SUGGESTIONS.map(s => <button key={s} className="sugg-btn" onClick={() => send(s)}>{s}</button>)}
+            {SUGGESTIONS.map(s => <button key={s} className="sugg-btn" onClick={() => send(t(s))}>{t(s)}</button>)}
           </div>
         )}
         <div className="chat-input-row">
           <input className="chat-input" value={input} onChange={e => setInput(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && send(input)}
-            placeholder="Pregúntale algo a Monedoki..." disabled={loading} />
-          <button className="chat-send" onClick={() => send(input)} disabled={loading || !input.trim()}>➤</button>
+            placeholder={t("Pregúntale algo a Monedoki...")} disabled={loading} maxLength={500} aria-label={t("Escribe tu pregunta para Monedoki")} />
+          <button className="chat-send" type="button" aria-label="Enviar mensaje" onClick={() => send(input)} disabled={loading || !input.trim()}>➤</button>
         </div>
       </div>
     </>

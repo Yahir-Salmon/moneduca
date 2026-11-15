@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { useLanguage, Trans } from '@/lib/language'
 
 interface Contenido {
   id: string
@@ -42,6 +43,7 @@ const TIPO_STYLE: Record<string, { bg: string; color: string; border: string }> 
 }
 
 export default function LecturaUnidadPage() {
+  const { t, language } = useLanguage()
   const params = useParams()
   const router = useRouter()
   const moduloId = params.moduloId as string
@@ -184,21 +186,21 @@ export default function LecturaUnidadPage() {
         {/* Breadcrumb */}
         <div className="lec-read-top">
           <div className="lec-read-top-inner">
-            <Link href="/biblioteca" className="breadcrumb-link">Biblioteca</Link>
+            <Link href="/biblioteca" className="breadcrumb-link">{t("Biblioteca")}</Link>
             <span className="breadcrumb-sep">›</span>
-            {modulo && <span className="breadcrumb-link">{modulo.nombre}</span>}
+            {modulo && <span className="breadcrumb-link"><Trans text={modulo.nombre} /></span>}
             <span className="breadcrumb-sep">›</span>
-            <span className="breadcrumb-current">{unidad.nombre}</span>
+            <span className="breadcrumb-current"><Trans text={unidad.nombre} /></span>
           </div>
         </div>
 
         <div className="lec-read-body">
           {/* Encabezado */}
           <div className="lec-read-meta">
-            {modulo && <p className="lec-read-modulo">Módulo {modulo.orden} — {modulo.nombre}</p>}
+            {modulo && <p className="lec-read-modulo">{t('Módulo')} {modulo.orden} — <Trans text={modulo.nombre} /></p>}
           </div>
-          <h1 className="lec-read-h1">{unidad.nombre}</h1>
-          {unidad.descripcion && <p className="lec-read-desc">{unidad.descripcion}</p>}
+          <h1 className="lec-read-h1"><Trans text={unidad.nombre} /></h1>
+          {unidad.descripcion && <p className="lec-read-desc"><Trans text={unidad.descripcion} /></p>}
 
           {/* Bloques de contenido */}
           {contenidos.length > 0 ? (
@@ -212,19 +214,19 @@ export default function LecturaUnidadPage() {
                       className="contenido-tipo-pill"
                       style={{ background: estilo.bg, color: estilo.color, borderColor: estilo.border }}
                     >
-                      {TIPO_LABEL[bloque.tipo] || bloque.tipo}
+                      {t(TIPO_LABEL[bloque.tipo] || bloque.tipo)}
                     </span>
-                    <h2 className="contenido-bloque-titulo">{bloque.titulo}</h2>
-                    <p className="contenido-bloque-texto">{bloque.texto}</p>
+                    <h2 className="contenido-bloque-titulo"><Trans text={bloque.titulo} /></h2>
+                    <p className="contenido-bloque-texto"><Trans text={bloque.texto} /></p>
                   </div>
                 )
               })}
             </>
           ) : (
             <div className="sin-contenido">
-              <h3 className="sin-contenido-h">Contenido en preparación</h3>
+              <h3 className="sin-contenido-h">{language === "en" ? "Content coming soon" : "Contenido en preparación"}</h3>
               <p className="sin-contenido-p">
-                El equipo de contenido está trabajando en esta unidad. Mientras tanto, puedes practicar la lección.
+                {language === "en" ? "This unit is being prepared. In the meantime, you can practice the lesson." : "El equipo de contenido está trabajando en esta unidad. Mientras tanto, puedes practicar la lección."}
               </p>
             </div>
           )}
@@ -234,11 +236,11 @@ export default function LecturaUnidadPage() {
           {/* CTA a la lección */}
           <div className="cta-leccion">
             <div className="cta-leccion-texto">
-              <div className="cta-leccion-titulo">¿Listo para practicar?</div>
-              <div className="cta-leccion-sub">Responde preguntas y consolida lo que leíste.</div>
+              <div className="cta-leccion-titulo">{language === "en" ? "Ready to practice?" : "¿Listo para practicar?"}</div>
+              <div className="cta-leccion-sub">{language === "en" ? "Answer questions to review what you read." : "Responde preguntas y consolida lo que leíste."}</div>
             </div>
             <Link href={`/aprender/${moduloId}/${unidadId}`} className="cta-leccion-btn">
-              Ir a la lección
+              {language === "en" ? "Start lesson" : "Ir a la lección"}
             </Link>
           </div>
 
@@ -246,21 +248,21 @@ export default function LecturaUnidadPage() {
           <div className="nav-unidades">
             {unidadAnterior ? (
               <Link href={`/biblioteca/${moduloId}/${unidadAnterior.id}`} className="nav-unidad-btn">
-                <span className="nav-unidad-dir">Anterior</span>
-                <span className="nav-unidad-nombre">{unidadAnterior.nombre}</span>
+                <span className="nav-unidad-dir">{language === "en" ? "Previous" : "Anterior"}</span>
+                <span className="nav-unidad-nombre"><Trans text={unidadAnterior.nombre} /></span>
               </Link>
             ) : (
               <div className="nav-unidad-empty" />
             )}
             {unidadSiguiente ? (
               <Link href={`/biblioteca/${moduloId}/${unidadSiguiente.id}`} className="nav-unidad-btn" style={{ textAlign: 'right' }}>
-                <span className="nav-unidad-dir">Siguiente</span>
-                <span className="nav-unidad-nombre">{unidadSiguiente.nombre}</span>
+                <span className="nav-unidad-dir">{language === "en" ? "Next" : "Siguiente"}</span>
+                <span className="nav-unidad-nombre"><Trans text={unidadSiguiente.nombre} /></span>
               </Link>
             ) : (
               <Link href="/biblioteca" className="nav-unidad-btn" style={{ textAlign: 'right', justifyContent: 'center' }}>
-                <span className="nav-unidad-dir">Fin del módulo</span>
-                <span className="nav-unidad-nombre">Volver a la biblioteca</span>
+                <span className="nav-unidad-dir">{language === "en" ? "End of module" : "Fin del módulo"}</span>
+                <span className="nav-unidad-nombre">{language === "en" ? "Back to the library" : "Volver a la biblioteca"}</span>
               </Link>
             )}
           </div>

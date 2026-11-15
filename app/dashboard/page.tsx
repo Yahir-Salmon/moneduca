@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { useLanguage, Trans } from '@/lib/language'
 
 interface Modulo { id: string; nombre: string; descripcion: string; orden: number; icono: string }
 interface Unidad { id: string; modulo_id: string; nombre: string; orden: number; descripcion: string }
@@ -18,6 +19,7 @@ const COLORES_MODULO = [
 ]
 
 export default function DashboardPage() {
+  const { t, language } = useLanguage()
   const [nombre, setNombre] = useState('')
   const [loading, setLoading] = useState(true)
   const [modulos, setModulos] = useState<Modulo[]>([])
@@ -68,8 +70,8 @@ export default function DashboardPage() {
 
   if (loading) return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#FFF8E8', gap: 16 }}>
-      <img src="/monedoki-neutral.png" alt="" style={{ width: 80 }} onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
-      <p style={{ fontFamily: "'Fredoka',sans-serif", fontSize: 20, color: '#6B4520' }}>Cargando...</p>
+      <img src="/monedoki.png" alt="" style={{ width: 80 }} onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
+      <p style={{ fontFamily: "'Fredoka',sans-serif", fontSize: 20, color: '#6B4520' }}>{t('Cargando...')}</p>
     </div>
   )
 
@@ -155,12 +157,12 @@ export default function DashboardPage() {
       <div className="dash-wrap">
         <div className="dash-top">
           <div className="dash-top-inner">
-            <div className="dash-welcome">¡Hola, <span>{nombre}</span>! 👋</div>
+            <div className="dash-welcome">{language === 'en' ? 'Hi,' : '¡Hola,'} <span>{nombre}</span>! 👋</div>
             <div className="dash-stats-row">
-              {racha > 0 && <div className="dash-stat-pill">{racha} días</div>}
+              {racha > 0 && <div className="dash-stat-pill">{racha} {language === 'en' ? 'days' : 'días'}</div>}
               <div className="dash-stat-pill">{totalCompletadas}/{totalUnidades}</div>
-              <Link href="/biblioteca" className="profile-link" style={{background:'rgba(232,217,184,0.5)',color:'#6B4520'}}>Biblioteca</Link>
-              <Link href="/perfil" className="profile-link">Mi perfil</Link>
+              <Link href="/biblioteca" className="profile-link" style={{background:'rgba(232,217,184,0.5)',color:'#6B4520'}}>{t('Biblioteca')}</Link>
+              <Link href="/perfil" className="profile-link">{t('Mi perfil')}</Link>
             </div>
           </div>
         </div>
@@ -170,8 +172,8 @@ export default function DashboardPage() {
           <div className="mk-motivacion">
             <img src="/monedoki-neutral.png" alt="" style={{ width: 48, flexShrink: 0 }} onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
             <div className="mk-mot-msg">
-              <strong>{totalCompletadas === 0 ? "Bienvenido" : totalCompletadas === totalUnidades ? "Todo completado" : "Continúa aprendiendo"}</strong>
-              {totalCompletadas === 0 ? 'Tu primera lección te espera.' : totalCompletadas === totalUnidades ? 'Completaste todos los módulos. Dominas todos los módulos.' : `Llevas ${totalCompletadas} unidades completadas de ${totalUnidades}.`}
+              <strong>{totalCompletadas === 0 ? (language === 'en' ? 'Welcome' : 'Bienvenido') : totalCompletadas === totalUnidades ? (language === 'en' ? 'All done' : 'Todo completado') : t('Continúa aprendiendo')}</strong>
+              {totalCompletadas === 0 ? t('Tu primera lección te espera.') : totalCompletadas === totalUnidades ? (language === 'en' ? 'You completed every module. Great job!' : 'Completaste todos los módulos. Dominas todos los módulos.') : language === 'en' ? `You completed ${totalCompletadas} of ${totalUnidades} units.` : `Llevas ${totalCompletadas} unidades completadas de ${totalUnidades}.`}
             </div>
           </div>
 
@@ -188,8 +190,8 @@ export default function DashboardPage() {
                 <div className="modulo-banner" style={{ background: color.bg }}>
                   <div className="modulo-banner-icon" style={{ background: color.light }}>{modulo.icono}</div>
                   <div>
-                    <div className="modulo-banner-nombre" style={{ color: color.accent }}>Módulo {mi + 1}: {modulo.nombre}</div>
-                    <div className="modulo-banner-info" style={{ color: color.accent }}>{completadasModulo}/{unidadesModulo.length} unidades</div>
+                    <div className="modulo-banner-nombre" style={{ color: color.accent }}>{t('Módulo')} {mi + 1}: <Trans text={modulo.nombre} /></div>
+                    <div className="modulo-banner-info" style={{ color: color.accent }}>{completadasModulo}/{unidadesModulo.length} {language === 'en' ? 'units' : 'unidades'}</div>
                   </div>
                   {completado && <div className="modulo-completo-badge"></div>}
                 </div>
@@ -213,8 +215,8 @@ export default function DashboardPage() {
                             {completada ? <span className="nodo-check">✓</span> : !desbloqueada ? <span className="nodo-lock">–</span> : <span className="nodo-num">{unidad.orden}</span>}
                           </div>
                           <div className="unidad-info">
-                            <div className="unidad-nombre-nodo">{unidad.nombre}</div>
-                            <div className="unidad-desc-nodo">{unidad.descripcion}</div>
+                            <div className="unidad-nombre-nodo"><Trans text={unidad.nombre} /></div>
+                            <div className="unidad-desc-nodo"><Trans text={unidad.descripcion} /></div>
                             {completada && <div className="unidad-puntaje">⭐ {prog?.ultimo_puntaje}%</div>}
                           </div>
                           {desbloqueada && (
@@ -222,7 +224,7 @@ export default function DashboardPage() {
                               href={`/aprender/${modulo.id}/${unidad.id}`}
                               className={`btn-empezar-grande ${completada ? 'btn-repasar' : ''}`}
                             >
-                              {completada ? 'Repasar' : 'Empezar →'}
+                              {completada ? (language === 'en' ? 'Review' : 'Repasar') : (language === 'en' ? 'Start →' : 'Empezar →')}
                             </Link>
                           )}
                         </div>
@@ -239,8 +241,8 @@ export default function DashboardPage() {
                 >
                   <div className="prueba-icon">{completado ? '' : '–'}</div>
                   <div>
-                    <div className="prueba-titulo">Prueba del módulo</div>
-                    <div className="prueba-desc">{completado ? 'Demuestra que dominaste todo el módulo' : 'Completa todas las unidades para desbloquear'}</div>
+                    <div className="prueba-titulo">{language === 'en' ? 'Module test' : 'Prueba del módulo'}</div>
+                    <div className="prueba-desc">{completado ? (language === 'en' ? 'Show what you learned in this module' : 'Demuestra que dominaste todo el módulo') : (language === 'en' ? 'Complete all units to unlock' : 'Completa todas las unidades para desbloquear')}</div>
                   </div>
                   <div className="prueba-arrow">{completado ? '→' : '–'}</div>
                 </div>

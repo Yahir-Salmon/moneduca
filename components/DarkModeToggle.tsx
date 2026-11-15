@@ -1,7 +1,9 @@
 'use client'
 import { useEffect, useState } from 'react'
+import { useLanguage } from '@/lib/language'
 
 export default function DarkModeToggle() {
+  const { t } = useLanguage()
   const [dark, setDark] = useState(false)
   const [mounted, setMounted] = useState(false)
 
@@ -26,7 +28,7 @@ export default function DarkModeToggle() {
   return (
     <button
       onClick={toggle}
-      aria-label={dark ? 'Activar modo claro' : 'Activar modo oscuro'}
+      aria-label={t(dark ? 'Activar modo claro' : 'Activar modo oscuro')}
       style={{
         background: 'none',
         border: 'none',
@@ -36,7 +38,7 @@ export default function DarkModeToggle() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        color: '#8C6D45',
+        color: 'var(--m-muted)',
         transition: 'color 0.2s',
         flexShrink: 0,
       }}

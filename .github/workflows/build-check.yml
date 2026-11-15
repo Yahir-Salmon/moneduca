@@ -1,0 +1,28 @@
+name: Verify Moneduca build
+
+on:
+  push:
+    branches:
+      - fix/recuperar-funciones-y-diseno
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: public-test-key
+      GROQ_API_KEY: build-test-placeholder
+      RESEND_API_KEY: build-test-placeholder
+      CRON_SECRET: build-test-placeholder
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm install --no-audit --no-fund
+      - run: npm run build

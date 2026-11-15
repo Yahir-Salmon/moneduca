@@ -2,9 +2,10 @@ import type { Metadata } from 'next'
 import './globals.css'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import { LanguageProvider } from '@/lib/language'
 
 export const metadata: Metadata = {
-  title: 'Moneduca — Finanzas para jóvenes',
+  title: 'Moneduca — Aprende a manejar tu dinero',
   description:
     'Aprende a manejar tu dinero de forma divertida e inteligente. Cursos de finanzas personales diseñados para jóvenes de secundaria.',
 icons: {
@@ -15,9 +16,9 @@ icons: {
 openGraph: {
   title: 'Moneduca — Finanzas para jóvenes',
   description: 'Aprende a manejar tu dinero de forma divertida e inteligente.',
-  url: 'https://www.moneduca.mx',
+  url: process.env.NEXT_PUBLIC_SITE_URL || undefined,
   siteName: 'Moneduca',
-  images: [{ url: 'https://www.moneduca.mx/monedoki.png', width: 400, height: 400 }],
+  images: [{ url: process.env.NEXT_PUBLIC_SITE_URL ? `${process.env.NEXT_PUBLIC_SITE_URL}/monedoki.png` : '/monedoki.png', width: 400, height: 400 }],
   type: 'website',
 },
   verification: {
@@ -32,9 +33,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="icon" href="/favicon.ico" sizes="any" />
       </head>
       <body>
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
+        <LanguageProvider>
+          <Navbar />
+          <main>{children}</main>
+          <Footer />
+        </LanguageProvider>
       </body>
     </html>
   )

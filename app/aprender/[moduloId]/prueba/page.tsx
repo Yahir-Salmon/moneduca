@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import { useLanguage, Trans } from '@/lib/language'
 
 interface Pregunta {
   id: string
@@ -19,6 +20,7 @@ function shuffle<T>(arr: T[]): T[] {
 }
 
 export default function PruebaModuloPage() {
+  const { language } = useLanguage()
   const params = useParams()
   const router = useRouter()
   const moduloId = params.moduloId as string
@@ -292,8 +294,8 @@ export default function PruebaModuloPage() {
           >
             ✕
           </button>
-          <span className="prueba-titulo-header">{moduloNombre}</span>
-          <span className="prueba-badge">Prueba final</span>
+          <span className="prueba-titulo-header"><Trans text={moduloNombre} /></span>
+          <span className="prueba-badge">{language === "en" ? "Final test" : "Prueba final"}</span>
           {fase !== 'intro' && fase !== 'resultado' && (
             <>
               <div className="prog-bar-wrap">
@@ -315,23 +317,22 @@ export default function PruebaModuloPage() {
                     <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
                   </svg>
                 </div>
-                <h1 className="intro-h">Prueba final: {moduloNombre}</h1>
+                <h1 className="intro-h">{language === "en" ? "Final test" : "Prueba final"}: <Trans text={moduloNombre} /></h1>
                 <p className="intro-sub">
-                  Demuestra que dominas los conceptos de este módulo.
-                  Necesitas obtener al menos 70% para aprobar.
+                  {language === "en" ? "Show what you learned in this module. You need at least 70% to pass." : "Demuestra que dominas los conceptos de este módulo. Necesitas obtener al menos 70% para aprobar."}
                 </p>
                 <ul className="intro-items">
-                  <li className="intro-item"><span className="intro-dot" />{totalPreguntas} preguntas de todas las unidades</li>
-                  <li className="intro-item"><span className="intro-dot" />Sin límite de tiempo</li>
-                  <li className="intro-item"><span className="intro-dot" />Verás la explicación de cada respuesta</li>
-                  <li className="intro-item"><span className="intro-dot" />Puedes repetirla si no apruebas</li>
+                  <li className="intro-item"><span className="intro-dot" />{totalPreguntas} {language === "en" ? "questions from all lessons" : "preguntas de todas las unidades"}</li>
+                  <li className="intro-item"><span className="intro-dot" />{language === "en" ? "No time limit" : "Sin límite de tiempo"}</li>
+                  <li className="intro-item"><span className="intro-dot" />{language === "en" ? "An explanation follows each answer" : "Verás la explicación de cada respuesta"}</li>
+                  <li className="intro-item"><span className="intro-dot" />{language === "en" ? "You can retake the test" : "Puedes repetirla si no apruebas"}</li>
                 </ul>
                 <button
                   className="accion-btn on"
                   style={{ maxWidth: 280, margin: '0 auto' }}
                   onClick={() => setFase('pregunta')}
                 >
-                  Comenzar prueba
+                  {language === "en" ? "Start test" : "Comenzar prueba"}
                 </button>
               </div>
             )}
@@ -339,8 +340,8 @@ export default function PruebaModuloPage() {
             {/* Pregunta activa */}
             {(fase === 'pregunta' || fase === 'feedback') && preguntaActual && (
               <div>
-                <p className="preg-numero">Pregunta {indice + 1} de {totalPreguntas}</p>
-                <p className="preg-text">{preguntaActual.pregunta}</p>
+                <p className="preg-numero">{language === "en" ? "Question" : "Pregunta"} {indice + 1} {language === "en" ? "of" : "de"} {totalPreguntas}</p>
+                <p className="preg-text"><Trans text={preguntaActual.pregunta} /></p>
 
                 <div className="opciones">
                   {(preguntaActual.opciones as string[]).map((op, i) => {
@@ -356,7 +357,7 @@ export default function PruebaModuloPage() {
                         onClick={() => { if (!confirmada) setSeleccionada(op) }}
                         disabled={confirmada}
                       >
-                        {op}
+                        <Trans text={op} />
                       </button>
                     )
                   })}
@@ -364,8 +365,8 @@ export default function PruebaModuloPage() {
 
                 {fase === 'feedback' && (
                   <div className={`feedback-box ${esCorrecta ? 'fb-ok' : 'fb-mal'}`}>
-                    <strong>{esCorrecta ? 'Correcto.' : 'Incorrecto.'}</strong>{' '}
-                    {preguntaActual.explicacion}
+                    <strong>{language === 'en' ? (esCorrecta ? 'Correct.' : 'Incorrect.') : (esCorrecta ? 'Correcto.' : 'Incorrecto.')}</strong>{' '}
+                    <Trans text={preguntaActual.explicacion} />
                   </div>
                 )}
 
@@ -375,11 +376,11 @@ export default function PruebaModuloPage() {
                     onClick={confirmar}
                     disabled={!seleccionada}
                   >
-                    Confirmar respuesta
+                    {language === "en" ? "Confirm answer" : "Confirmar respuesta"}
                   </button>
                 ) : (
                   <button className="accion-btn next" onClick={siguiente}>
-                    {indice + 1 >= totalPreguntas ? 'Ver resultados' : 'Siguiente'}
+                    {indice + 1 >= totalPreguntas ? (language === 'en' ? 'View results' : 'Ver resultados') : (language === 'en' ? 'Next' : 'Siguiente')}
                   </button>
                 )}
               </div>
@@ -390,40 +391,42 @@ export default function PruebaModuloPage() {
               <div className="resultado-wrap">
                 <div className="resultado-score" style={{ borderColor: puntajeFinal >= 70 ? '#3B6D11' : '#993C1D' }}>
                   <span className="score-num" style={{ color: puntajeFinal >= 70 ? '#3B6D11' : '#993C1D' }}>{puntajeFinal}%</span>
-                  <span className="score-label">puntaje</span>
+                  <span className="score-label">{language === "en" ? "score" : "puntaje"}</span>
                 </div>
 
                 <h2 className="resultado-h">
-                  {puntajeFinal >= 70 ? 'Módulo aprobado' : 'Intenta de nuevo'}
+                  {language === 'en' ? (puntajeFinal >= 70 ? 'Module passed' : 'Try again') : (puntajeFinal >= 70 ? 'Módulo aprobado' : 'Intenta de nuevo')}
                 </h2>
                 <p className="resultado-sub">
-                  {puntajeFinal >= 70
-                    ? `Respondiste correctamente ${correctas} de ${totalPreguntas} preguntas. Dominas el módulo.`
-                    : `Respondiste correctamente ${correctas} de ${totalPreguntas} preguntas. Necesitas al menos 70% para aprobar.`}
+                  {language === "en"
+                    ? `You answered ${correctas} of ${totalPreguntas} questions correctly. ${puntajeFinal >= 70 ? "You passed!" : "You need at least 70% to pass."}`
+                    : puntajeFinal >= 70
+                      ? `Respondiste correctamente ${correctas} de ${totalPreguntas} preguntas. Dominas el módulo.`
+                      : `Respondiste correctamente ${correctas} de ${totalPreguntas} preguntas. Necesitas al menos 70% para aprobar.`}
                 </p>
 
                 <div className="stats-fila">
                   <div className="stat-caja">
                     <div className="stat-n" style={{ color: '#3B6D11' }}>{correctas}</div>
-                    <div className="stat-l">correctas</div>
+                    <div className="stat-l">{language === "en" ? "correct" : "correctas"}</div>
                   </div>
                   <div className="stat-caja">
                     <div className="stat-n" style={{ color: '#993C1D' }}>{totalPreguntas - correctas}</div>
-                    <div className="stat-l">incorrectas</div>
+                    <div className="stat-l">{language === "en" ? "incorrect" : "incorrectas"}</div>
                   </div>
                   <div className="stat-caja">
                     <div className="stat-n">{totalPreguntas}</div>
-                    <div className="stat-l">total</div>
+                    <div className="stat-l">{language === "en" ? "total" : "total"}</div>
                   </div>
                 </div>
 
                 <div className="btns-col">
                   <button className="accion-btn on" onClick={() => router.push('/dashboard')}>
-                    Volver al inicio
+                    {language === "en" ? "Back to home" : "Volver al inicio"}
                   </button>
                   {puntajeFinal < 70 && (
                     <button className="sec-btn" onClick={reintentar}>
-                      Repetir prueba
+                      {language === "en" ? "Retake test" : "Repetir prueba"}
                     </button>
                   )}
                 </div>

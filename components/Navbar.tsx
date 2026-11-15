@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import DarkModeToggle from './DarkModeToggle'
+import LanguageSwitcher from './LanguageSwitcher'
+import { useLanguage } from '@/lib/language'
 
 const links = [
   { href: '/cursos',        label: 'Cursos'    },
@@ -13,6 +15,7 @@ const links = [
 ]
 
 export default function Navbar() {
+  const { t } = useLanguage()
   const [open, setOpen] = useState(false)
   const [session, setSession] = useState(false)
   const [nombre, setNombre] = useState('')
@@ -131,7 +134,7 @@ export default function Navbar() {
                 href={l.href}
                 className={`nav-link ${pathname === l.href ? 'active' : ''}`}
               >
-                {l.label}
+                {t(l.label)}
               </Link>
             ))}
             {session && (
@@ -139,7 +142,7 @@ export default function Navbar() {
                 href="/dashboard"
                 className={`nav-link ${pathname === '/dashboard' ? 'active' : ''}`}
               >
-                Mi cuenta
+                {t('Mi cuenta')}
               </Link>
             )}
           </div>
@@ -148,7 +151,7 @@ export default function Navbar() {
             {session ? (
               <>
                 <span className="nav-user-name">{nombre}</span>
-                <button className="nav-logout" onClick={handleLogout}>Salir</button>
+                <button className="nav-logout" onClick={handleLogout}>{t('Salir')}</button>
               </>
             ) : (
               <Link
@@ -156,13 +159,14 @@ export default function Navbar() {
                 className="btn btn-primary"
                 style={{ padding: '9px 20px', fontSize: 14 }}
               >
-                Empezar gratis
+                {t('Empezar gratis')}
               </Link>
             )}
           </div>
 
+          <LanguageSwitcher />
           <DarkModeToggle />
-          <button className="hamburger" onClick={() => setOpen(!open)} aria-label="Menú">
+          <button className="hamburger" onClick={() => setOpen(!open)} aria-label={t("Abrir menú")}>
             <span className="ham-line" />
             <span className="ham-line" />
             <span className="ham-line" />
@@ -178,7 +182,7 @@ export default function Navbar() {
             className="mobile-link"
             onClick={() => setOpen(false)}
           >
-            {l.label}
+            {t(l.label)}
           </Link>
         ))}
         {session ? (
@@ -188,7 +192,7 @@ export default function Navbar() {
               className="mobile-link"
               onClick={() => setOpen(false)}
             >
-              Mi cuenta
+              {t('Mi cuenta')}
             </Link>
             <button
               onClick={() => { handleLogout(); setOpen(false) }}
@@ -199,7 +203,7 @@ export default function Navbar() {
                 color: '#8C6D45', cursor: 'pointer',
               }}
             >
-              Cerrar sesión
+              {t('Cerrar sesión')}
             </button>
           </>
         ) : (
@@ -209,7 +213,7 @@ export default function Navbar() {
             style={{ marginTop: 16, display: 'block', textAlign: 'center' }}
             onClick={() => setOpen(false)}
           >
-            Empezar gratis
+            {t('Empezar gratis')}
           </Link>
         )}
       </div>
