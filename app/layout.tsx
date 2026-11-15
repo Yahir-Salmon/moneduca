@@ -5,7 +5,7 @@ import Footer from '@/components/Footer'
 import { LanguageProvider } from '@/lib/language'
 
 export const metadata: Metadata = {
-  title: 'Moneduca — Finanzas para jóvenes',
+  title: 'Moneduca — Aprende a manejar tu dinero',
   description:
     'Aprende a manejar tu dinero de forma divertida e inteligente. Cursos de finanzas personales diseñados para jóvenes de secundaria.',
 icons: {
@@ -18,7 +18,7 @@ openGraph: {
   description: 'Aprende a manejar tu dinero de forma divertida e inteligente.',
   url: process.env.NEXT_PUBLIC_SITE_URL || undefined,
   siteName: 'Moneduca',
-  images: [{ url: '/monedoki.png', width: 400, height: 400 }],
+  images: [{ url: process.env.NEXT_PUBLIC_SITE_URL ? `${process.env.NEXT_PUBLIC_SITE_URL}/monedoki.png` : '/monedoki.png', width: 400, height: 400 }],
   type: 'website',
 },
   verification: {
