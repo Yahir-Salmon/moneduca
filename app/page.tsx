@@ -39,15 +39,11 @@ export default function HomePage() {
     <>
       <style>{`
         .hero { min-height: 100vh; padding-top: 68px; display: flex; align-items: center; background: #FFF8E8; position: relative; overflow: hidden; }
-        .hero::before { content: ''; position: absolute; top: -150px; right: -150px; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(250,191,77,0.18) 0%, transparent 70%); pointer-events: none; }
         .hero-inner { max-width: 1200px; margin: 0 auto; padding: 80px 24px; display: grid; grid-template-columns: 1fr 400px; gap: 64px; align-items: center; position: relative; z-index: 1; }
-        .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: rgba(252,230,139,0.6); color: #6B4520; padding: 8px 16px; border-radius: 100px; font-size: 13px; font-weight: 700; margin-bottom: 24px; font-family: 'Nunito',sans-serif; }
-        .hero-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(250,191,77,1); animation: pulse 2s infinite; }
-        @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.5);opacity:0.6} }
         .hero-h1 { font-size: clamp(38px,5vw,60px); font-weight: 700; line-height: 1.05; margin-bottom: 20px; color: #3D2A0E; }
         .hero-h1 .accent { color: #C8934A; }
         .hero-h1 .subray { position: relative; display: inline-block; }
-        .hero-h1 .subray::after { content: ''; position: absolute; bottom: -4px; left: 0; right: 0; height: 4px; background: rgba(250,191,77,1); border-radius: 2px; }
+        .hero-h1 .subray::after { content: ''; position: absolute; bottom: -5px; left: 0; right: 0; height: 2px; background: #C8934A; opacity: 0.65; }
         .hero-desc { font-size: 17px; color: #8C6D45; margin-bottom: 36px; line-height: 1.7; font-family: 'Nunito',sans-serif; }
         .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 48px; }
         .hero-stats { display: flex; gap: 32px; }
@@ -55,7 +51,7 @@ export default function HomePage() {
         .stat-label { font-size: 13px; color: #A87840; font-family: 'Nunito',sans-serif; }
         /* Hero right - Monedoki */
         .hero-right { display: flex; flex-direction: column; align-items: center; gap: 16px; }
-        .mk-bubble { background: rgba(250,191,77,1); border-radius: 20px 20px 20px 6px; padding: 14px 18px; font-family: 'Fredoka',sans-serif; font-size: 16px; font-weight: 600; color: #3D2A0E; text-align: center; box-shadow: 4px 4px 0px rgba(145,99,47,0.2); }
+        .mk-bubble { background: #FFFDF5; border: 1px solid #E8D9B8; border-radius: 14px; padding: 14px 18px; font-family: 'Fredoka',sans-serif; font-size: 16px; font-weight: 600; color: #3D2A0E; text-align: center; }
         .mk-hero-img { width: 200px; height: 200px; object-fit: contain; filter: drop-shadow(4px 8px 12px rgba(145,99,47,0.2)); }
         .hero-card { background: #FFFDF5; border-radius: 20px; border: 1px solid #E8D9B8; padding: 20px; width: 100%; box-shadow: 4px 4px 0px rgba(145,99,47,0.08); }
         .card-label { font-size: 11px; color: #A87840; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 14px; font-weight: 700; font-family: 'Nunito',sans-serif; }
@@ -116,12 +112,11 @@ export default function HomePage() {
       <section className="hero">
         <div className="hero-inner">
           <div>
-            <div className="hero-eyebrow"><span className="hero-dot" /> Educación financiera para jóvenes</div>
             <h1 className="hero-h1">
               Tu dinero,{' '}<span className="subray">tus reglas.</span><br />
               <span className="accent">Aprende hoy.</span>
             </h1>
-            <p className="hero-desc">Moneduca te enseña todo lo que la escuela no te dijo sobre el dinero. 6 módulos, lecciones interactivas y Monedoki como tu guía.</p>
+            <p className="hero-desc">Aprende a organizar tus gastos, ahorrar y entender cómo funciona el dinero. Lecciones cortas, ejercicios prácticos y Monedoki para resolver tus dudas.</p>
             <div className="hero-btns">
               <button onClick={handleCTA} className="btn btn-primary" style={{ fontSize: 16, padding: '16px 32px' }}>Empezar gratis</button>
               <Link href="/cursos" className="btn btn-secondary" style={{ fontSize: 16, padding: '16px 32px' }}>Ver módulos</Link>
@@ -136,7 +131,7 @@ export default function HomePage() {
             <div className="mk-bubble">Hola, soy Monedoki.<br/>Aprende a manejar tu dinero.</div>
             <img src="/monedoki.png" alt="Monedoki" className="mk-hero-img" onError={e => { (e.target as HTMLImageElement).style.display='none' }} />
             <div className="hero-card">
-              <p className="card-label">Tu progreso esta semana</p>
+              <p className="card-label">Ejemplo de tu avance</p>
               {[{ name: 'Historia del dinero', pct: 75, color: 'rgba(250,191,77,1)' }, { name: 'Presupuesto y ahorro', pct: 40, color: '#C8934A' }, { name: 'Tarjetas de crédito', pct: 10, color: '#8C6D45' }].map(item => (
                 <div key={item.name} className="prog-item">
                   <div className="prog-header">
