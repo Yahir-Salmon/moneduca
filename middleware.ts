@@ -6,7 +6,8 @@ import { NextRequest, NextResponse } from 'next/server'
 const requestCounts = new Map<string, { count: number; resetAt: number }>()
 
 const LIMITS: Record<string, { max: number; windowMs: number }> = {
-  '/api/chat':    { max: 20,  windowMs: 60_000 },   // 20 mensajes por minuto
+  '/api/chat':    { max: 20,  windowMs: 60_000 },
+  '/api/translate': { max: 12, windowMs: 60_000 },   // 20 mensajes por minuto
   '/api/contact': { max: 3,   windowMs: 300_000 },   // 3 mensajes cada 5 minutos
   '/api/cron':    { max: 5,   windowMs: 3_600_000 }, // 5 llamadas por hora
 }
