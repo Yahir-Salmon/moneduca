@@ -26,6 +26,7 @@ export async function GET(req: NextRequest) {
 }
 
 function paginaResultado(exito: boolean): string {
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://' + (process.env.VERCEL_URL || 'localhost:3000')).replace(/\/$/, '')
   return `<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -52,10 +53,10 @@ function paginaResultado(exito: boolean): string {
     ${exito
       ? `<h1>Listo</h1>
          <p>Ya no recibirás recordatorios semanales de Moneduca. Puedes reactivarlos desde tu perfil cuando quieras.</p>
-         <a href="https://moneduca.mx">Volver al inicio</a>`
+         <a href="${siteUrl}">Volver al inicio</a>`
       : `<h1>Algo salió mal</h1>
          <p>No pudimos procesar tu solicitud. Intenta de nuevo desde tu perfil.</p>
-         <a href="https://moneduca.mx/perfil">Ir a mi perfil</a>`
+         <a href="${siteUrl}/perfil">Ir a mi perfil</a>`
     }
   </div>
 </body>
