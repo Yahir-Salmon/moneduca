@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import { useLanguage, Trans } from '@/lib/language'
 import { PreguntaOrdenar } from '@/components/leccion/PreguntaOrdenar'
 import { PreguntaDragDrop } from '@/components/leccion/PreguntaDragDrop'
 
@@ -22,13 +23,13 @@ interface Contenido {
 }
 
 const MONEDOKI_POSES: Record<string, string> = {
-  neutral: '/monedoki-neutral.png',
-  feliz: '/monedoki-feliz.png',
-  super: '/monedoki-super.png',
-  animo: '/monedoki-animo.png',
-  triste: '/monedoki-triste.png',
-  pensar: '/monedoki-pensar.png',
-  sorpresa: '/monedoki-sorpresa.png',
+  neutral: '/monedoki.png',
+  feliz: '/monedoki.png',
+  super: '/monedoki.png',
+  animo: '/monedoki.png',
+  triste: '/monedoki.png',
+  pensar: '/monedoki.png',
+  sorpresa: '/monedoki.png',
 }
 
 const POSES_ROTACION: (keyof typeof MONEDOKI_POSES)[] = ['neutral', 'pensar', 'sorpresa', 'neutral', 'pensar', 'sorpresa', 'neutral']
@@ -85,6 +86,7 @@ function getContenidoPlantilla(unidadId: string, idx: number): Contenido | null 
 }
 
 export default function LeccionPage() {
+  const { t, language } = useLanguage()
   const params = useParams()
   const router = useRouter()
   const moduloId = params.moduloId as string
@@ -312,7 +314,7 @@ export default function LeccionPage() {
       <div className="lec-wrap">
         <div className="lec-header">
           <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: '#8C6D45', flexShrink: 0 }}>✕</button>
-          <span className="lec-titulo">{unidadNombre}</span>
+          <span className="lec-titulo"><Trans text={unidadNombre} /></span>
           <div className="prog-wrap"><div className="prog-fill" style={{ width: `${progresoPct}%` }} /></div>
           <span className="prog-label">{indice + 1}/{preguntas.length}</span>
         </div>
@@ -323,14 +325,14 @@ export default function LeccionPage() {
             {fase === 'contenido' && contenidoActual && (
               <div className="contenido-wrap">
                 <span className={`contenido-badge badge-${contenidoActual.tipo}`}>
-                  {contenidoActual.tipo === 'intro' ? 'Introducción' : contenidoActual.tipo === 'dato' ? 'Contexto' : 'Consejo'}
+                  {t(contenidoActual.tipo === 'intro' ? 'Introducción' : contenidoActual.tipo === 'dato' ? 'Contexto' : 'Consejo')}
                 </span>
-                <h2 className="contenido-titulo">{contenidoActual.titulo}</h2>
-                <p className="contenido-texto">{contenidoActual.texto}</p>
+                <h2 className="contenido-titulo"><Trans text={contenidoActual.titulo} /></h2>
+                <p className="contenido-texto"><Trans text={contenidoActual.texto} /></p>
                 <div style={{ marginTop: 28 }}>
                   <button className="accion-btn on" style={{ maxWidth: 260 }}
                     onClick={() => { setFase('pregunta'); setMonedokiPose(POSES_ROTACION[0]) }}>
-                    Continuar →
+                    {language === "en" ? "Continue →" : "Continuar →"}
                   </button>
                 </div>
               </div>
@@ -338,23 +340,23 @@ export default function LeccionPage() {
 
             {fase === 'contenido' && !contenidoActual && (() => {
               setTimeout(() => { setFase('pregunta'); setMonedokiPose(POSES_ROTACION[0]) }, 0)
-              return <div style={{ padding: 40, textAlign: 'center', color: '#A87840', fontFamily: "'Fredoka',sans-serif" }}>Cargando...</div>
+              return <div style={{ padding: 40, textAlign: 'center', color: '#A87840', fontFamily: "'Fredoka',sans-serif" }}>{t("Cargando...")}</div>
             })()}
 
             {fase === 'completado' && (
               <div className="result-wrap">
                 <img src={MONEDOKI_POSES.super} alt="" style={{ width: 110, margin: '0 auto 8px' }} onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
                 <div className="result-stars"></div>
-                <h2 className="result-h">Unidad completada</h2>
-                <p className="result-sub">Completaste <strong>{unidadNombre}</strong>.</p>
+                <h2 className="result-h">{language === "en" ? "Lesson completed" : "Unidad completada"}</h2>
+                <p className="result-sub">{language === "en" ? "You completed" : "Completaste"} <strong><Trans text={unidadNombre} /></strong>.</p>
                 <div className="stats-row">
-                  <div className="stat-b"><div className="stat-n">{correctas}</div><div className="stat-l">correctas</div></div>
-                  <div className="stat-b"><div className="stat-n">{errores}</div><div className="stat-l">errores</div></div>
-                  <div className="stat-b"><div className="stat-n">{Math.round((correctas / preguntas.length) * 100)}%</div><div className="stat-l">puntaje</div></div>
+                  <div className="stat-b"><div className="stat-n">{correctas}</div><div className="stat-l">{language === "en" ? "correct" : "correctas"}</div></div>
+                  <div className="stat-b"><div className="stat-n">{errores}</div><div className="stat-l">{language === "en" ? "errors" : "errores"}</div></div>
+                  <div className="stat-b"><div className="stat-n">{Math.round((correctas / preguntas.length) * 100)}%</div><div className="stat-l">{language === "en" ? "score" : "puntaje"}</div></div>
                 </div>
                 <div className="btns-col">
-                  <button className="accion-btn on" onClick={() => router.push('/dashboard')}>Volver al inicio</button>
-                  <button className="sec-btn" onClick={handleReintentar}>Practicar de nuevo</button>
+                  <button className="accion-btn on" onClick={() => router.push('/dashboard')}>{language === "en" ? "Back to home" : "Volver al inicio"}</button>
+                  <button className="sec-btn" onClick={handleReintentar}>{language === "en" ? "Practice again" : "Practicar de nuevo"}</button>
                 </div>
               </div>
             )}
@@ -362,15 +364,15 @@ export default function LeccionPage() {
             {fase === 'repaso' && (
               <div className="result-wrap">
                 <img src={MONEDOKI_POSES.animo} alt="" style={{ width: 100, margin: '0 auto 8px' }} onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
-                <h2 className="result-h">¡Casi lo logras!</h2>
-                <p className="result-sub">Obtuviste {Math.round((correctas / preguntas.length) * 100)}%. Necesitas al menos 60%. ¡Monedoki sabe que puedes!</p>
+                <h2 className="result-h">{language === "en" ? "Almost there!" : "¡Casi lo logras!"}</h2>
+                <p className="result-sub">{language === "en" ? "You scored" : "Obtuviste"} {Math.round((correctas / preguntas.length) * 100)}%. {language === "en" ? "You need at least 60%. You can do it!" : "Necesitas al menos 60%. ¡Monedoki sabe que puedes!"}</p>
                 <div className="stats-row">
-                  <div className="stat-b"><div className="stat-n">{correctas}</div><div className="stat-l">correctas</div></div>
-                  <div className="stat-b"><div className="stat-n">{errores}</div><div className="stat-l">errores</div></div>
+                  <div className="stat-b"><div className="stat-n">{correctas}</div><div className="stat-l">{language === "en" ? "correct" : "correctas"}</div></div>
+                  <div className="stat-b"><div className="stat-n">{errores}</div><div className="stat-l">{language === "en" ? "errors" : "errores"}</div></div>
                 </div>
                 <div className="btns-col">
-                  <button className="accion-btn on" onClick={handleReintentar}>Intentar de nuevo</button>
-                  <button className="sec-btn" onClick={() => router.push('/dashboard')}>Volver al inicio</button>
+                  <button className="accion-btn on" onClick={handleReintentar}>{language === "en" ? "Try again" : "Intentar de nuevo"}</button>
+                  <button className="sec-btn" onClick={() => router.push('/dashboard')}>{language === "en" ? "Back to home" : "Volver al inicio"}</button>
                 </div>
               </div>
             )}
@@ -378,7 +380,7 @@ export default function LeccionPage() {
             {(fase === 'pregunta' || fase === 'feedback') && preguntaActual && (
               <div className="preg-layout">
                 <div>
-                  <p className="preg-text">{preguntaActual.pregunta}</p>
+                  <p className="preg-text"><Trans text={preguntaActual.pregunta} /></p>
 
                   {(preguntaActual.tipo === 'multiple' || preguntaActual.tipo === 'completar' || preguntaActual.tipo === 'verdadero_falso') && (
                     <>
@@ -391,20 +393,20 @@ export default function LeccionPage() {
                           } else if (op === seleccionada) cls += ' sel'
                           return (
                             <button key={i} className={cls} onClick={() => { if (!confirmada) setSeleccionada(op) }} disabled={confirmada}>
-                              {op}
+                              <Trans text={op} />
                             </button>
                           )
                         })}
                       </div>
                       {fase === 'feedback' && (
                         <div className={`feedback ${esCorrecta ? 'fb-ok' : 'fb-mal'}`}>
-                          <strong>{esCorrecta ? 'Correcto.' : 'Incorrecto.'}</strong>
-                          <br />{preguntaActual.explicacion}
+                          <strong>{language === 'en' ? (esCorrecta ? 'Correct.' : 'Incorrect.') : (esCorrecta ? 'Correcto.' : 'Incorrecto.')}</strong>
+                          <br /><Trans text={preguntaActual.explicacion} />
                         </div>
                       )}
                       {fase === 'pregunta'
-                        ? <button className={`accion-btn ${seleccionada ? 'on' : 'off'}`} onClick={handleConfirmarMultiple} disabled={!seleccionada}>Confirmar respuesta</button>
-                        : <button className="accion-btn next" onClick={handleSiguiente}>{indice + 1 >= preguntas.length ? 'Ver resultados' : 'Siguiente'}</button>
+                        ? <button className={`accion-btn ${seleccionada ? 'on' : 'off'}`} onClick={handleConfirmarMultiple} disabled={!seleccionada}>{language === "en" ? "Confirm answer" : "Confirmar respuesta"}</button>
+                        : <button className="accion-btn next" onClick={handleSiguiente}>{indice + 1 >= preguntas.length ? (language === 'en' ? 'View results' : 'Ver resultados') : (language === 'en' ? 'Next' : 'Siguiente')}</button>
                       }
                     </>
                   )}
@@ -415,10 +417,10 @@ export default function LeccionPage() {
                   {preguntaActual.tipo === 'ordenar' && fase === 'feedback' && (
                     <>
                       <div className={`feedback ${esCorrecta ? 'fb-ok' : 'fb-mal'}`}>
-                        <strong>{esCorrecta ? 'Correcto.' : 'Incorrecto.'}</strong>
-                        <br />{preguntaActual.explicacion}
+                        <strong>{language === 'en' ? (esCorrecta ? 'Correct.' : 'Incorrect.') : (esCorrecta ? 'Correcto.' : 'Incorrecto.')}</strong>
+                        <br /><Trans text={preguntaActual.explicacion} />
                       </div>
-                      <button className="accion-btn next" onClick={handleSiguiente}>{indice + 1 >= preguntas.length ? 'Ver resultados' : 'Siguiente'}</button>
+                      <button className="accion-btn next" onClick={handleSiguiente}>{indice + 1 >= preguntas.length ? (language === 'en' ? 'View results' : 'Ver resultados') : (language === 'en' ? 'Next' : 'Siguiente')}</button>
                     </>
                   )}
 
@@ -428,10 +430,10 @@ export default function LeccionPage() {
                   {preguntaActual.tipo === 'drag_and_drop' && fase === 'feedback' && (
                     <>
                       <div className={`feedback ${esCorrecta ? 'fb-ok' : 'fb-mal'}`}>
-                        <strong>{esCorrecta ? 'Correcto.' : 'Incorrecto.'}</strong>
-                        <br />{preguntaActual.explicacion}
+                        <strong>{language === 'en' ? (esCorrecta ? 'Correct.' : 'Incorrect.') : (esCorrecta ? 'Correcto.' : 'Incorrecto.')}</strong>
+                        <br /><Trans text={preguntaActual.explicacion} />
                       </div>
-                      <button className="accion-btn next" onClick={handleSiguiente}>{indice + 1 >= preguntas.length ? 'Ver resultados' : 'Siguiente'}</button>
+                      <button className="accion-btn next" onClick={handleSiguiente}>{indice + 1 >= preguntas.length ? (language === 'en' ? 'View results' : 'Ver resultados') : (language === 'en' ? 'Next' : 'Siguiente')}</button>
                     </>
                   )}
                 </div>
