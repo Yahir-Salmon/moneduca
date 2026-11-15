@@ -7,6 +7,12 @@ export type Language = 'es' | 'en'
 // Los textos se mantienen en español como idioma fuente. Si falta una cadena,
 // se muestra el original en vez de ocultar el contenido o generar una traducción falsa.
 const english: Record<string, string> = {
+  'Te enviamos un email de confirmación a': 'We sent a confirmation email to',
+  'Confírmalo y luego inicia sesión.': 'Confirm it, then sign in.',
+  'Enviar mensaje ✦': 'Send message ✦',
+  'Abrir menú': 'Open menu',
+  'Verificando tu cuenta...': 'Verifying your account...',
+  'En un momento te llevamos a tu dashboard': 'Taking you to your dashboard shortly',
   'Cursos': 'Courses',
   'Biblioteca': 'Library',
   'Nosotros': 'About us',
@@ -181,6 +187,82 @@ type LanguageContextValue = {
   language: Language
   setLanguage: (value: Language) => void
   t: (spanish: string) => string
+}
+
+
+/**
+ * Translates content returned by Supabase while keeping the original Spanish
+ * values in state. Quiz comparison and progress tracking always use originals.
+ */
+const translatedCache = new Map<string, string>()
+const pending = new Set<string>()
+const listeners = new Set<() => void>()
+let requestScheduled = false
+
+function announceTranslation() {
+  listeners.forEach(listener => listener())
+}
+
+function scheduleTranslation(text: string) {
+  if (!text.trim() || text.length > 1800 || translatedCache.has(text)) return
+  pending.add(text)
+  if (requestScheduled) return
+  requestScheduled = true
+  window.setTimeout(async () => {
+    requestScheduled = false
+    const requested = Array.from(pending).slice(0, 20)
+    requested.forEach(item => pending.delete(item))
+    if (!requested.length) return
+    try {
+      const response = await fetch('/api/translate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ texts: requested }),
+      })
+      if (!response.ok) throw new Error('Translation request failed')
+      const data: { translations?: unknown } = await response.json()
+      if (!Array.isArray(data.translations) || data.translations.length !== requested.length) {
+        throw new Error('Unexpected response')
+      }
+      requested.forEach((item, index) => {
+        const translated = data.translations?.[index]
+        if (typeof translated === 'string' && translated.trim()) {
+          translatedCache.set(item, translated)
+        }
+      })
+      announceTranslation()
+    } catch {
+      // Remain readable in Spanish if the translation service is offline.
+    }
+    if (pending.size) {
+      const first = pending.values().next().value
+      if (typeof first === 'string') scheduleTranslation(first)
+    }
+  }, 60)
+}
+
+export function useTranslatedText(text: string | null | undefined): string {
+  const { language, t } = useLanguage()
+  const original = text ?? ''
+  const [translated, setTranslated] = useState<string | null>(null)
+  useEffect(() => {
+    if (language !== 'en' || !original || t(original) !== original) {
+      setTranslated(null)
+      return
+    }
+    const refresh = () => setTranslated(translatedCache.get(original) ?? null)
+    refresh()
+    listeners.add(refresh)
+    scheduleTranslation(original)
+    return () => { listeners.delete(refresh) }
+  }, [language, original, t])
+  if (language === 'es') return original
+  const known = t(original)
+  return known !== original ? known : translatedCache.get(original) ?? translated ?? original
+}
+
+export function Trans({ text }: { text: string | null | undefined }) {
+  return <>{useTranslatedText(text)}</>
 }
 
 const LanguageContext = createContext<LanguageContextValue | null>(null)
