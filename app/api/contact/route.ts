@@ -40,6 +40,9 @@ export async function POST(req: NextRequest) {
     const mensajeLimpio = escapeHtml(mensaje)
     const emailLimpio = escapeHtml(email)
 
+    const remitente = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'
+    const destino = process.env.CONTACT_EMAIL || 'moneduca.finanzas@gmail.com'
+
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
@@ -47,8 +50,8 @@ export async function POST(req: NextRequest) {
         'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: 'Moneduca <hola@moneduca.mx>',
-        to: ['moneduca.finanzas@gmail.com'],
+        from: `Moneduca <${remitente}>`,
+        to: [destino],
         subject: `Mensaje de contacto — ${nombreLimpio}`,
         html: `
           <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #1a1a1a;">
@@ -59,7 +62,7 @@ export async function POST(req: NextRequest) {
               <p style="margin: 8px 0;"><strong>Mensaje:</strong></p>
               <p style="background: white; padding: 16px; border-radius: 8px; border-left: 3px solid #C8934A; margin-top: 8px; white-space: pre-wrap;">${mensajeLimpio}</p>
             </div>
-            <p style="color: #A87840; font-size: 12px;">Enviado desde moneduca.mx</p>
+            <p style="color: #A87840; font-size: 12px;">Enviado desde Moneduca</p>
           </div>
         `,
         reply_to: email.trim(),
