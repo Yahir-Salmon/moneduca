@@ -7,6 +7,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
   }
 
+  if (!process.env.RESEND_FROM_EMAIL || process.env.RESEND_FROM_EMAIL === 'onboarding@resend.dev') {
+    return NextResponse.json({ error: 'Los recordatorios requieren un remitente de correo verificado.' }, { status: 503 })
+  }
+
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -40,8 +44,9 @@ export async function POST(req: NextRequest) {
 
 async function enviarRecordatorio(usuario: { id: string; nombre: string; email: string }) {
   const nombre = usuario.nombre || 'Estudiante'
-  const dashboardUrl = 'https://moneduca.mx/dashboard'
-  const cancelUrl = `https://moneduca.mx/api/cancelar-correos?id=${usuario.id}`
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://' + (process.env.VERCEL_URL || 'localhost:3000')).replace(/\/$/, '')
+  const dashboardUrl = `${siteUrl}/dashboard`
+  const cancelUrl = `${siteUrl}/api/cancelar-correos?id=${usuario.id}`
 
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
@@ -50,7 +55,7 @@ async function enviarRecordatorio(usuario: { id: string; nombre: string; email: 
       'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
     },
     body: JSON.stringify({
-      from: 'Moneduca <hola@moneduca.mx>',
+      from: `Moneduca <${process.env.RESEND_FROM_EMAIL}>`,
       to: [usuario.email],
       subject: `${nombre}, tu aprendizaje te espera`,
       html: emailTemplate(nombre, dashboardUrl, cancelUrl),
@@ -131,7 +136,7 @@ function emailTemplate(nombre: string, dashboardUrl: string, cancelUrl: string):
             <td style="padding-top:24px;">
               <p style="margin:0;font-size:12px;color:#A87840;line-height:1.6;">
                 Recibes este correo porque tienes una cuenta en
-                <a href="https://moneduca.mx" style="color:#C8934A;text-decoration:none;">moneduca.mx</a>.
+                <a href="${siteUrl}" style="color:#C8934A;text-decoration:none;">moneduca.mx</a>.
               </p>
               <p style="margin:8px 0 0;">
                 <a href="${cancelUrl}" style="font-size:10px;color:#C8B89A;text-decoration:none;">dejar de recibir recordatorios</a>
