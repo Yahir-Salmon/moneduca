@@ -1,6 +1,9 @@
+'use client'
 import Link from 'next/link'
+import { useLanguage } from '@/lib/language'
 
 export default function Footer() {
+  const { t } = useLanguage()
   return (
     <>
       <style>{`
@@ -54,32 +57,31 @@ export default function Footer() {
                 Moneduca
               </Link>
               <p className="footer-desc">
-                Educación financiera accesible para jóvenes de secundaria.
-                Aprende a manejar tu dinero desde hoy.
+                {t('Educación financiera accesible para jóvenes de secundaria. Aprende a manejar tu dinero desde hoy.')}
               </p>
             </div>
             <div>
-              <p className="footer-col-title">Aprende</p>
-              <Link href="/cursos"             className="footer-link">Todos los módulos</Link>
-              <Link href="/biblioteca"          className="footer-link">Biblioteca</Link>
-              <Link href="/cursos#presupuesto"  className="footer-link">Presupuesto</Link>
-              <Link href="/cursos#inversion"    className="footer-link">Inversión</Link>
+              <p className="footer-col-title">{t('Aprende')}</p>
+              <Link href="/cursos"             className="footer-link">{t('Todos los módulos')}</Link>
+              <Link href="/biblioteca"          className="footer-link">{t('Biblioteca')}</Link>
+              <Link href="/cursos#presupuesto"  className="footer-link">{t('Presupuesto')}</Link>
+              <Link href="/cursos#inversion"    className="footer-link">{t('Inversión')}</Link>
             </div>
             <div>
-              <p className="footer-col-title">Nosotros</p>
-              <Link href="/quienes-somos" className="footer-link">Quiénes somos</Link>
-              <Link href="/contacto"      className="footer-link">Contacto</Link>
-              <Link href="/registro"      className="footer-link">Crear cuenta</Link>
+              <p className="footer-col-title">{t('Nosotros')}</p>
+              <Link href="/quienes-somos" className="footer-link">{t('Quiénes somos')}</Link>
+              <Link href="/contacto"      className="footer-link">{t('Contacto')}</Link>
+              <Link href="/registro"      className="footer-link">{t('Crear cuenta')}</Link>
             </div>
             <div>
-              <p className="footer-col-title">Legal</p>
-              <Link href="/privacidad" className="footer-link">Privacidad</Link>
-              <Link href="/terminos"   className="footer-link">Términos de uso</Link>
+              <p className="footer-col-title">{t('Legal')}</p>
+              <Link href="/privacidad" className="footer-link">{t('Privacidad')}</Link>
+              <Link href="/terminos"   className="footer-link">{t('Términos de uso')}</Link>
             </div>
           </div>
           <div className="footer-bottom">
-            <p>© 2026 <span style={{ color: 'rgba(252,230,139,1)' }}>Moneduca</span>. Todos los derechos reservados.</p>
-            <p style={{ color: '#A87840' }}>Educación financiera para jóvenes mexicanos.</p>
+            <p>© 2026 <span style={{ color: 'rgba(252,230,139,1)' }}>Moneduca</span>. {t('Todos los derechos reservados.')}</p>
+            <p style={{ color: '#A87840' }}>{t('Educación financiera para jóvenes mexicanos.')}</p>
           </div>
         </div>
       </footer>
