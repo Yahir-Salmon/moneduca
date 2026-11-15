@@ -165,8 +165,8 @@ export default function Navbar() {
           </div>
 
           <LanguageSwitcher />
-        <DarkModeToggle />
-          <button className="hamburger" onClick={() => setOpen(!open)} aria-label="Menú">
+          <DarkModeToggle />
+          <button className="hamburger" onClick={() => setOpen(!open)} aria-label={t("Abrir menú")}>
             <span className="ham-line" />
             <span className="ham-line" />
             <span className="ham-line" />
@@ -182,7 +182,7 @@ export default function Navbar() {
             className="mobile-link"
             onClick={() => setOpen(false)}
           >
-            {l.label}
+            {t(l.label)}
           </Link>
         ))}
         {session ? (
@@ -192,7 +192,7 @@ export default function Navbar() {
               className="mobile-link"
               onClick={() => setOpen(false)}
             >
-              Mi cuenta
+              {t('Mi cuenta')}
             </Link>
             <button
               onClick={() => { handleLogout(); setOpen(false) }}
