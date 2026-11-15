@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 
 export type Language = 'es' | 'en'
 
@@ -169,8 +169,6 @@ const english: Record<string, string> = {
   'Estudiante': 'Student',
   'Continúa aprendiendo': 'Keep learning',
   'Tu primera lección te espera.': 'Your first lesson is waiting.',
-  'Biblioteca': 'Library',
-  'Mi perfil': 'My profile',
   'Logros': 'Achievements',
   'Certificados': 'Certificates',
   'Volver': 'Back',
@@ -187,7 +185,7 @@ type LanguageContextValue = {
 
 const LanguageContext = createContext<LanguageContextValue | null>(null)
 
-export function LanguageProvider({ children }: { children: React.ReactNode }) {
+export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<Language>('es')
 
   useEffect(() => {
