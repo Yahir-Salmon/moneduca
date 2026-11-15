@@ -58,7 +58,7 @@ async function enviarRecordatorio(usuario: { id: string; nombre: string; email: 
       from: `Moneduca <${process.env.RESEND_FROM_EMAIL}>`,
       to: [usuario.email],
       subject: `${nombre}, tu aprendizaje te espera`,
-      html: emailTemplate(nombre, dashboardUrl, cancelUrl),
+      html: emailTemplate(nombre, dashboardUrl, cancelUrl, siteUrl),
     }),
   })
 
@@ -70,7 +70,7 @@ async function enviarRecordatorio(usuario: { id: string; nombre: string; email: 
   return res.json()
 }
 
-function emailTemplate(nombre: string, dashboardUrl: string, cancelUrl: string): string {
+function emailTemplate(nombre: string, dashboardUrl: string, cancelUrl: string, siteUrl: string): string {
   return `<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -136,7 +136,7 @@ function emailTemplate(nombre: string, dashboardUrl: string, cancelUrl: string):
             <td style="padding-top:24px;">
               <p style="margin:0;font-size:12px;color:#A87840;line-height:1.6;">
                 Recibes este correo porque tienes una cuenta en
-                <a href="${siteUrl}" style="color:#C8934A;text-decoration:none;">moneduca.mx</a>.
+                <a href="${siteUrl}" style="color:#C8934A;text-decoration:none;">Moneduca</a>.
               </p>
               <p style="margin:8px 0 0;">
                 <a href="${cancelUrl}" style="font-size:10px;color:#C8B89A;text-decoration:none;">dejar de recibir recordatorios</a>
