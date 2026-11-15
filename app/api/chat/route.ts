@@ -26,6 +26,10 @@ const MAX_MESSAGES = 20
 const MAX_MESSAGE_LENGTH = 500
 
 export async function POST(req: NextRequest) {
+  if (!process.env.GROQ_API_KEY) {
+    return NextResponse.json({ error: 'El asistente está temporalmente fuera de servicio.' }, { status: 503 })
+  }
+
   try {
     const body = await req.json()
 
@@ -80,9 +84,11 @@ export async function POST(req: NextRequest) {
     })
 
     if (!response.ok) {
-      const err = await response.json()
-      console.error('Groq error:', err)
-      throw new Error('Groq API error')
+      console.error('Groq request failed with status:', response.status)
+      return NextResponse.json(
+        { error: 'No pudimos conectar con el asistente. Intenta de nuevo más tarde.' },
+        { status: 502 }
+      )
     }
 
     const data = await response.json()
@@ -96,7 +102,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error('Chat error:', error)
     return NextResponse.json(
-      { content: 'Hubo un error. Por favor intenta de nuevo.' },
+      { error: 'No se pudo procesar la solicitud. Intenta de nuevo.' },
       { status: 500 }
     )
   }
