@@ -261,7 +261,11 @@ html.dark .unidad-fila:hover { background: #31271E !important; }
 html.dark .nodo-num, html.dark .unidad-puntaje { color: #F1C16E !important; }
 html.dark .nodo-circulo.bloqueado { opacity: .7; }
 html.dark .qs-body { background: #17130F; }
-html.dark .qs-hero, html.dark .problema, html.dark .cta-box { background: #302218 !important; }
+html.dark .problema, html.dark .cta-box { background: #302218 !important; }
+html.dark .qs-hero { background: #DDB46F !important; border-bottom-color: #A87A3A !important; }
+html.dark .qs-hero .qs-h1, html.dark .qs-hero .qs-h1 span { color: #241508 !important; }
+html.dark .qs-hero .qs-desc { color: #473019 !important; }
+html.dark .qs-hero .tag-deco { background: #FFF2D2 !important; color: #3D2A0E !important; }
 html.dark .qs-desc, html.dark .prob-text { color: #E0C9AE !important; }
 html.dark .mision-text, html.dark .valor-desc { color: #D7C2AA !important; }
 html.dark .qs-h1 span, html.dark .prob-h2 span { color: #F5C878 !important; }
@@ -270,3 +274,7 @@ html.dark .language-switcher { background: #241D17; border-color: #665038; }
 html.dark .language-switcher button { color: #D7C2AA; }
 html.dark .language-switcher button.selected { background: #F2C978; color: #26190C; }
 html.dark .footer-link, html.dark .footer-desc, html.dark .footer-bottom { color: #D4B48A !important; }
+
+/* Ensure Monedoki's introduction stays legible when its background flips in dark mode. */
+html.dark .mk-bubble { color: #FFF1D3 !important; background: #352719 !important; border-color: #A88757 !important; box-shadow: none; }
+html.dark .mk-bubble strong { color: #FFF1D3 !important; }
